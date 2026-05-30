@@ -1,0 +1,511 @@
+/* ── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes amiRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes amiPop {
+  0%   { transform: scale(0); }
+  70%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes amiFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Root ───────────────────────────────────────────────────────────────────── */
+.root {
+  max-width: 640px;
+  margin: 0 auto;
+  background: #0c0a06;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #fef3c7;
+  font-size: 15px;
+  line-height: 1.65;
+  position: relative;
+}
+
+.page {
+  padding: 16px 14px 80px;
+  animation: amiRise .4s ease both;
+}
+
+/* ── Hero / title screen ────────────────────────────────────────────────────── */
+.heroSection {
+  min-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  background: linear-gradient(to bottom, #0c0a06 0%, #1c1409 50%, #0c0a06 100%);
+}
+
+.badge {
+  background: rgba(217,119,6,.15);
+  border: 1px solid rgba(217,119,6,.4);
+  color: #f59e0b;
+  border-radius: 99px;
+  padding: 5px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.heroTitle {
+  font-size: clamp(32px, 7vw, 48px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+
+.heroTitle span { color: #f59e0b; }
+
+.heroSub {
+  font-size: 14px;
+  color: #d97706;
+  max-width: 380px;
+  margin-bottom: 8px;
+  font-weight: 300;
+}
+
+.heroCls {
+  font-size: 11px;
+  color: #f59e0b;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.chip {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 99px;
+  padding: 5px 14px;
+  font-size: 12px;
+  color: #fde68a;
+  font-weight: 500;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────── */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 30px;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(217,119,6,.35);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(217,119,6,.5);
+}
+
+.btnBack {
+  background: rgba(255,255,255,.07);
+  color: #fde68a;
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.btnBack:hover { background: rgba(255,255,255,.12); }
+
+.btnDark {
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 12px;
+  border: none;
+  background: #111;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity .15s;
+  margin-top: 8px;
+}
+
+.btnDark:hover { opacity: .85; }
+
+/* ── Instructions ───────────────────────────────────────────────────────────── */
+.sectionTitle {
+  font-size: 19px;
+  font-weight: 700;
+  color: #fef3c7;
+  margin-bottom: 6px;
+}
+
+.instrCard {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  background: rgba(217,119,6,.08);
+  border: 1px solid rgba(217,119,6,.3);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.instrIcon { font-size: 20px; flex-shrink: 0; }
+
+.instrTitle {
+  font-weight: 600;
+  color: #fbbf24;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.instrText { font-size: 13px; line-height: 1.6; color: #fde68a; }
+
+/* ── Progress bar ───────────────────────────────────────────────────────────── */
+.progressBar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(10,10,15,.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.progressLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fcd34d;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 5px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+
+.progressPct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f59e0b;
+  width: 32px;
+  text-align: right;
+}
+
+/* ── Mission card ───────────────────────────────────────────────────────────── */
+.missionCard {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  animation: amiRise .35s ease both;
+}
+
+.missionHeader {
+  background: linear-gradient(135deg, #1c1409, #2d1f08);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.missionNum {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.missionArea {
+  font-size: 11px;
+  color: #d97706;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  padding: 3px 10px;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.missionBody {
+  background: #1c1409;
+  padding: 20px;
+}
+
+.missionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.missionBrief {
+  font-size: 13.5px;
+  color: #fcd34d;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+.momentLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(217,119,6,.1);
+  border: 1px solid rgba(217,119,6,.25);
+  color: #f59e0b;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.missionPrompt {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+}
+
+/* ── Obstacle card ──────────────────────────────────────────────────────────── */
+.obstacleCard {
+  background: rgba(217,119,6,.08);
+  border: 1px solid rgba(217,119,6,.25);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.obstacleTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+
+.obstacleText {
+  font-size: 13.5px;
+  color: #fcd34d;
+  line-height: 1.6;
+}
+
+/* ── Options ────────────────────────────────────────────────────────────────── */
+.opts {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.optBtn {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 15px;
+  border-radius: 11px;
+  border: 1.5px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  cursor: pointer;
+  transition: all .18s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  color: #fde68a;
+}
+
+.optBtn:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+  transform: translateX(3px);
+}
+
+.optBtnSel {
+  border-color: #f59e0b !important;
+  background: rgba(217,119,6,.1) !important;
+  transform: translateX(3px);
+}
+
+.optBtnSel .optText { color: #fff; font-weight: 500; }
+
+.optIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+.optText { font-size: 13.5px; line-height: 1.5; }
+
+/* ── Nav row ────────────────────────────────────────────────────────────────── */
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.hint {
+  font-size: 12px;
+  color: rgba(255,255,255,.4);
+  font-style: italic;
+}
+
+.hintOk { color: #22c55e; }
+
+/* ── Transition overlay ─────────────────────────────────────────────────────── */
+.transitionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(12,10,6,.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: amiFadeIn .25s ease;
+}
+
+.transitionContent { text-align: center; }
+
+.transitionIcon {
+  font-size: 52px;
+  animation: amiPop .5s ease;
+  color: #f59e0b;
+}
+
+.transitionMsg {
+  color: #d97706;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* ── Result screen ──────────────────────────────────────────────────────────── */
+.finishHero {
+  background: linear-gradient(135deg, #1c1409, #2d1f08);
+  border-radius: 16px;
+  padding: 40px 28px;
+  text-align: center;
+  border: 1px solid rgba(217,119,6,.3);
+  margin-bottom: 20px;
+}
+
+.finishHero h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.finishHero p { color: #fcd34d; font-size: 14px; }
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 480px) {
+  .resultGrid { grid-template-columns: 1fr; }
+}
+
+.resultCard {
+  background: #1c1409;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.resultArea {
+  font-size: 11px;
+  color: #d97706;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.resultBarWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultBarTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.resultBarFill {
+  height: 6px;
+  border-radius: 99px;
+  transition: width 1s ease;
+}
+
+.resultScore {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fef3c7;
+  min-width: 32px;
+  text-align: right;
+}
+
+.resultLabel {
+  font-size: 11px;
+  margin-top: 4px;
+  font-style: italic;
+}

@@ -10,6 +10,7 @@ import { Construction } from 'lucide-react'
 // Game components
 import RiasecBattleCards from '@/components/experiences/RiasecBattleCards'
 import DecifraMente from '@/components/experiences/DecifraMente'
+import AgenciaMissaoImpossivel from '@/components/experiences/AgenciaMissaoImpossivel'
 
 interface Props {
   experience: Experience
@@ -117,6 +118,18 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'decifra-mente') {
     return (
       <DecifraMente
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'agencia-missao-impossivel') {
+    return (
+      <AgenciaMissaoImpossivel
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
