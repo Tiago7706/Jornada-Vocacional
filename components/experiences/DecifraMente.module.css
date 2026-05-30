@@ -1,0 +1,344 @@
+/* ── Keyframes ──────────────────────────────────────────────────────────────── */
+
+@keyframes dmPulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 15px rgba(255,215,0,.4); }
+  50%       { opacity: .8; box-shadow: 0 0 30px rgba(255,215,0,.8); }
+}
+
+@keyframes dmGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,215,0,.3); }
+  50%       { box-shadow: 0 0 24px rgba(255,215,0,.7); }
+}
+
+@keyframes dmFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dmBannerIn {
+  from { opacity: 0; transform: translateY(-20px) scale(.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes dmStarTwinkle {
+  0%, 100% { opacity: .15; }
+  50%       { opacity: .6; }
+}
+
+/* ── Root container ─────────────────────────────────────────────────────────── */
+.root {
+  max-width: 430px;
+  margin: 0 auto;
+  background: #0a0a14;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ── Pixel font helper ───────────────────────────────────────────────────────── */
+.pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* ── Title screen ────────────────────────────────────────────────────────────── */
+.titleLogo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(18px, 5vw, 26px);
+  color: #FFD700;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(255,215,0,.5);
+  margin-bottom: 8px;
+}
+
+.titleSub {
+  font-size: 10px;
+  color: rgba(255,255,255,.4);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.btnPrimary {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  padding: 12px 0;
+  background: #FFD700;
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  cursor: pointer;
+  width: 100%;
+  animation: dmGlow 1.5s infinite;
+  transition: opacity .15s;
+}
+
+.btnPrimary:hover { opacity: .9; }
+
+.btnSecondary {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px 0;
+  background: rgba(0,0,0,.5);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  width: 100%;
+  transition: border-color .2s, color .2s;
+}
+
+.btnSecondary:hover {
+  border-color: rgba(255,215,0,.5);
+  color: #FFD700;
+}
+
+/* ── Avatar selector ─────────────────────────────────────────────────────────── */
+.avatarCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  transition: border-color .2s, background .2s, box-shadow .2s;
+  flex: 1;
+}
+
+.avatarCard:hover {
+  border-color: rgba(255,215,0,.4);
+  background: rgba(255,215,0,.05);
+}
+
+.avatarCardSel {
+  border-color: #FFD700;
+  background: rgba(255,215,0,.1);
+  box-shadow: 0 0 16px rgba(255,215,0,.25);
+}
+
+.avatarLabel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: rgba(255,255,255,.4);
+  transition: color .2s;
+}
+
+.avatarCardSel .avatarLabel {
+  color: #FFD700;
+}
+
+/* ── Instructions ────────────────────────────────────────────────────────────── */
+.instCard {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  border-left: 3px solid #FFD700;
+}
+
+/* ── Game screen ─────────────────────────────────────────────────────────────── */
+.sceneLabel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #FFD700;
+  text-align: center;
+  animation: dmBannerIn .4s ease-out;
+}
+
+.questionCard {
+  background: rgba(5,5,15,.97);
+  border: 2px solid #FFD700;
+  border-radius: 14px;
+  padding: 16px;
+  animation: dmFadeIn .3s ease-out;
+}
+
+.ctxLabel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #FFD700;
+  margin-bottom: 6px;
+  opacity: .8;
+}
+
+.questionText {
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  min-height: 52px;
+}
+
+.choiceBtn {
+  background: rgba(255,215,0,.07);
+  border: 1.5px solid rgba(255,215,0,.28);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  line-height: 1.5;
+  transition: background .15s, border-color .15s, transform .1s;
+}
+
+.choiceBtn:hover, .choiceBtn:active {
+  background: rgba(255,215,0,.22);
+  border-color: #FFD700;
+  transform: translateX(3px);
+}
+
+/* ── Progress ────────────────────────────────────────────────────────────────── */
+.progressBar {
+  height: 4px;
+  background: rgba(255,255,255,.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #FFD700;
+  border-radius: 2px;
+  transition: width .4s ease-out;
+}
+
+/* ── Scene dots ──────────────────────────────────────────────────────────────── */
+.sceneDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sceneDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  transition: background .3s, transform .3s;
+}
+
+.sceneDotActive {
+  background: #FFD700;
+  transform: scale(1.3);
+  box-shadow: 0 0 6px rgba(255,215,0,.5);
+}
+
+.sceneDotDone {
+  background: rgba(255,215,0,.45);
+}
+
+/* ── Scene transition banner ─────────────────────────────────────────────────── */
+.transitionBanner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.92);
+  z-index: 50;
+  animation: dmFadeIn .25s ease-out;
+}
+
+.transitionText {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #fff;
+  background: rgba(0,0,0,.92);
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 2px solid #FFD700;
+  text-align: center;
+  line-height: 1.9;
+  white-space: nowrap;
+}
+
+/* ── Result screen ───────────────────────────────────────────────────────────── */
+.resultRoot {
+  background: #fff;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #111;
+}
+
+.resultCard {
+  border-radius: 16px;
+  border: 2px solid;
+  padding: 1.2rem;
+  margin-bottom: 1.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.resultCard::after {
+  content: 'MBTI';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 64px;
+  font-weight: 900;
+  opacity: .05;
+  pointer-events: none;
+  letter-spacing: -2px;
+}
+
+.careerChip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  background: rgba(0,0,0,.04);
+  cursor: default;
+}
+
+.resultBtnGroup {
+  display: flex;
+  gap: 8px;
+  margin-bottom: .9rem;
+}
+
+.btnLight {
+  flex: 1;
+  padding: 11px 0;
+  border-radius: 10px;
+  border: 1.5px solid #ddd;
+  background: #f5f5f5;
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btnDark {
+  width: 100%;
+  padding: 14px 0;
+  border-radius: 12px;
+  border: none;
+  background: #111;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+
+.btnDark:hover { opacity: .85; }
+
+/* ── Star background ─────────────────────────────────────────────────────────── */
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  animation: dmStarTwinkle var(--dur, 2s) infinite;
+  animation-delay: var(--delay, 0s);
+}
