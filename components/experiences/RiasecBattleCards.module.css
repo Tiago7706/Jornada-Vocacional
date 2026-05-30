@@ -1,0 +1,355 @@
+/* ── Keyframe animations ─────────────────────────────────────────────────── */
+
+@keyframes rbcSlideLeft {
+  0%   { transform: translateX(-130px) rotate(-28deg) scale(0.65); opacity: 0; }
+  55%  { transform: translateX(8px) rotate(3deg) scale(1.04); opacity: 1; }
+  80%  { transform: translateX(-3px) rotate(-1deg); }
+  100% { transform: none; opacity: 1; }
+}
+
+@keyframes rbcSlideRight {
+  0%   { transform: translateX(130px) rotate(28deg) scale(0.65); opacity: 0; }
+  55%  { transform: translateX(-8px) rotate(-3deg) scale(1.04); opacity: 1; }
+  80%  { transform: translateX(3px) rotate(1deg); }
+  100% { transform: none; opacity: 1; }
+}
+
+@keyframes rbcBadge {
+  0%   { opacity: 0; transform: scale(0.5); }
+  40%  { opacity: 1; transform: scale(1); }
+  65%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4) translateY(-28px); }
+}
+
+/* ── Battle cards ─────────────────────────────────────────────────────────── */
+
+.card {
+  border-radius: 14px;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 240px;
+  transition:
+    transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.35s,
+    box-shadow 0.35s;
+}
+
+.card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cardSlideLeft {
+  animation: rbcSlideLeft 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.cardSlideRight {
+  animation: rbcSlideRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.cardWin {
+  transform: scale(1.06) translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  z-index: 2;
+}
+
+.cardLose {
+  transform: scale(0.9) translateY(4px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.cardNone {
+  opacity: 0.18;
+  transform: scale(0.94);
+  pointer-events: none;
+}
+
+/* ── Progress fills ───────────────────────────────────────────────────────── */
+
+.energyFill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0;
+  transition: width 0.35s;
+}
+
+.xpFill {
+  height: 100%;
+  background: #E24B4A;
+  border-radius: 2px;
+  transition: width 0.4s;
+}
+
+.breakBarFill {
+  height: 100%;
+  border-radius: 5px;
+  width: 0;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.radarFill {
+  height: 100%;
+  border-radius: 5px;
+  width: 0;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── VS label ─────────────────────────────────────────────────────────────── */
+
+.vsLabel {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0;
+  color: #E24B4A;
+  transition: font-size 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.vsLabelVisible {
+  font-size: 22px;
+}
+
+/* ── Abstain button ───────────────────────────────────────────────────────── */
+
+.abstainBtn {
+  border-radius: 12px;
+  border: 1.5px dashed #ccc;
+  background: #f9f9f9;
+  cursor: pointer;
+  padding: 9px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 300px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.22s, transform 0.22s, border-color 0.2s, background 0.2s;
+}
+
+.abstainBtn:hover {
+  border-color: #888;
+}
+
+.abstainBtnVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.abstainBtnAlert {
+  border-color: #F5A623 !important;
+  background: #FFFBF0 !important;
+}
+
+/* ── Flash overlay ────────────────────────────────────────────────────────── */
+
+.flashOverlay {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 150;
+  transition: opacity 0.07s;
+}
+
+.flashOverlayActive {
+  opacity: 0.2;
+}
+
+/* ── Floating badge ───────────────────────────────────────────────────────── */
+
+.badgeOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.badgeText {
+  font-size: 68px;
+  opacity: 0;
+}
+
+.badgeTextAnim {
+  animation: rbcBadge 0.66s forwards;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+
+.playBtn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  padding: 13px 40px;
+  border: none;
+  border-radius: 50px;
+  background: #E24B4A;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.playBtn:hover {
+  opacity: 0.9;
+}
+
+.continueBtn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 19px;
+  letter-spacing: 2px;
+  padding: 13px 36px;
+  border: none;
+  border-radius: 50px;
+  background: #E24B4A;
+  color: #fff;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+
+.continueBtn:hover {
+  opacity: 0.9;
+}
+
+.continueBtnDisabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.restartBtnPrimary {
+  flex: 1;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  padding: 12px;
+  border: none;
+  background: #E24B4A;
+  color: #fff;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.restartBtnSecondary {
+  flex: 1;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  padding: 12px;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: #1a1a1a;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.restartBtnSecondary:hover {
+  border-color: #1a1a1a;
+}
+
+.doneBtn {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1.5px;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  background: #1a1a1a;
+  color: #fff;
+  width: 100%;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  margin-top: 4px;
+}
+
+.doneBtn:hover {
+  opacity: 0.85;
+}
+
+/* ── Roster cards (intro) ─────────────────────────────────────────────────── */
+
+.rosterCard {
+  border-radius: 12px;
+  border: 1.5px solid;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  height: 120px;
+  transition: transform 0.15s;
+}
+
+.rosterCard:hover {
+  transform: scale(1.04);
+}
+
+/* ── Career chips ─────────────────────────────────────────────────────────── */
+
+.chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.chip:hover {
+  transform: scale(1.06);
+}
+
+/* ── Anchor option buttons ────────────────────────────────────────────────── */
+
+.anchorOpt {
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  background: #fafafa;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.anchorOpt:hover {
+  border-color: #bbb;
+  background: #f0f0f0;
+}
+
+/* ── Stat bars (modal) ────────────────────────────────────────────────────── */
+
+.statBg {
+  height: 4px;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 2px;
+}
+
+.statFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s;
+}
+
+/* ── Podium bars ──────────────────────────────────────────────────────────── */
+
+.podiumSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 12px 12px 0 0;
+  flex: 1;
+  padding: 8px 4px;
+  border: 1.5px solid;
+}

@@ -7,6 +7,9 @@ import type { Experience } from '@/types/database'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Construction } from 'lucide-react'
 
+// Game components
+import RiasecBattleCards from '@/components/experiences/RiasecBattleCards'
+
 interface Props {
   experience: Experience
   patientId: string
@@ -14,8 +17,6 @@ interface Props {
   isCompleted: boolean
 }
 
-// Componentes de experiencia — serão implementados individualmente
-// Por ora exibe placeholder para experiencias ainda nao migradas
 function PlaceholderGame({ title, onComplete }: { title: string; onComplete: () => void }) {
   return (
     <Card className="max-w-2xl mx-auto mt-8">
@@ -53,12 +54,12 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
     }, 2000)
   }, [experience.id])
 
+  // onComplete: save scores to DB, then let the game component handle navigation
   const handleComplete = useCallback(async (
     scores: Record<string, unknown>,
     responses: Record<string, unknown>
   ) => {
     try {
-      // Salvar scores
       await fetch('/api/game-state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -70,11 +71,11 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
           responses,
         }),
       })
-      toast.success('Experiencia concluida!')
+      toast.success('Resultado salvo com sucesso!')
       router.push('/painel')
       router.refresh()
     } catch {
-      toast.error('Erro ao salvar progresso.')
+      toast.error('Erro ao salvar resultado. Tente novamente.')
     }
   }, [experience.id, router])
 
@@ -86,14 +87,33 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
 
   if (isCompleted) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 space-y-4">
         <p className="text-muted-foreground">Voce ja concluiu esta experiencia.</p>
+        <button
+          className="text-sm underline text-muted-foreground"
+          onClick={() => router.push('/painel')}
+        >
+          Voltar ao painel
+        </button>
       </div>
     )
   }
 
-  // Roteamento para componentes especificos por slug
-  // Cada game sera implementado como componente separado
+  // ── Route to specific game component by slug ──────────────────────────────
+
+  if (experience.slug === 'riasec-battle-cards') {
+    return (
+      <RiasecBattleCards
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  // Fallback placeholder for games not yet migrated
   return (
     <PlaceholderGame
       title={experience.title}
