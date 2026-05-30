@@ -12,6 +12,7 @@ import RiasecBattleCards from '@/components/experiences/RiasecBattleCards'
 import DecifraMente from '@/components/experiences/DecifraMente'
 import AgenciaMissaoImpossivel from '@/components/experiences/AgenciaMissaoImpossivel'
 import SuperQuem from '@/components/experiences/SuperQuem'
+import JogoDaMemoria from '@/components/experiences/JogoDaMemoria'
 
 interface Props {
   experience: Experience
@@ -143,6 +144,18 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'agencia-missao-impossivel') {
     return (
       <AgenciaMissaoImpossivel
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'jogo-da-memoria') {
+    return (
+      <JogoDaMemoria
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
