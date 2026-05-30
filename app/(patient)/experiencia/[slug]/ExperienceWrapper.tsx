@@ -14,6 +14,7 @@ import AgenciaMissaoImpossivel from '@/components/experiences/AgenciaMissaoImpos
 import SuperQuem from '@/components/experiences/SuperQuem'
 import JogoDaMemoria from '@/components/experiences/JogoDaMemoria'
 import ExpedicaoCientifica from '@/components/experiences/ExpedicaoCientifica'
+import HQdaSaude from '@/components/experiences/HQdaSaude'
 
 interface Props {
   experience: Experience
@@ -169,6 +170,18 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'expedicao-cientifica') {
     return (
       <ExpedicaoCientifica
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'hq-da-saude') {
+    return (
+      <HQdaSaude
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
