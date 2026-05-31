@@ -15,6 +15,9 @@ import SuperQuem from '@/components/experiences/SuperQuem'
 import JogoDaMemoria from '@/components/experiences/JogoDaMemoria'
 import ExpedicaoCientifica from '@/components/experiences/ExpedicaoCientifica'
 import HQdaSaude from '@/components/experiences/HQdaSaude'
+import FaceAFace from '@/components/experiences/FaceAFace'
+import QuemFalaIsso from '@/components/experiences/QuemFalaIsso'
+import UmaNoiteNoMuseu from '@/components/experiences/UmaNoiteNoMuseu'
 
 interface Props {
   experience: Experience
@@ -182,6 +185,42 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'hq-da-saude') {
     return (
       <HQdaSaude
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'face-a-face') {
+    return (
+      <FaceAFace
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'quem-fala-isso') {
+    return (
+      <QuemFalaIsso
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'uma-noite-no-museu') {
+    return (
+      <UmaNoiteNoMuseu
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
