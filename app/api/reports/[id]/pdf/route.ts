@@ -1,6 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdmin } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { renderToBuffer } from '@react-pdf/renderer'
+import type { DocumentProps } from '@react-pdf/renderer'
+import { createElement } from 'react'
+import type { ReactElement } from 'react'
+import RelatorioPDF from '@/components/pdf/RelatorioPDF'
+
+export const dynamic = 'force-dynamic'
+// Ensure Node.js runtime — @react-pdf/renderer uses canvas/Node APIs
+export const runtime = 'nodejs'
 
 const supabaseAdmin = createAdmin(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,6 +21,7 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Auth guard — admin only
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user || user.user_metadata?.role !== 'admin') {
@@ -19,44 +29,54 @@ export async function GET(
   }
 
   const { id } = await params
+
+  // Fetch report + patient name
   const { data: report } = await supabaseAdmin
     .from('reports')
     .select('*, patients(full_name)')
     .eq('id', id)
     .single()
 
-  if (!report) return NextResponse.json({ error: 'Relatorio nao encontrado.' }, { status: 404 })
+  if (!report) {
+    return NextResponse.json({ error: 'Relatorio nao encontrado.' }, { status: 404 })
+  }
 
-  // Gerar PDF simples via HTML→PDF (usando @react-pdf/renderer server-side seria mais complexo)
-  // Por ora, retornamos um HTML formatado para impressão
-  const patientName = (report.patients as { full_name: string } | null)?.full_name ?? 'Paciente'
-  const reportTypeLabel = report.report_type === 'clinical' ? 'Clinico' : 'Simplificado'
-  const date = new Date(report.created_at).toLocaleString('pt-BR')
+  const patientName =
+    (report.patients as { full_name: string } | null)?.full_name ?? 'Paciente'
 
-  const html = `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Relatorio ${reportTypeLabel} - ${patientName}</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #1a1a1a; }
-    h1 { font-size: 24px; margin-bottom: 4px; }
-    .meta { color: #666; font-size: 14px; margin-bottom: 32px; }
-    .content { line-height: 1.8; white-space: pre-wrap; font-size: 14px; }
-    @media print { body { margin: 0; } }
-  </style>
-</head>
-<body>
-  <h1>Relatorio ${reportTypeLabel}</h1>
-  <p class="meta">${patientName} — Gerado em ${date}</p>
-  <div class="content">${report.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-  <script>window.onload = () => window.print()</script>
-</body>
-</html>`
+  const generatedAt = new Date(report.created_at).toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
-  return new NextResponse(html, {
+  // Render PDF buffer
+  const pdfElement = createElement(RelatorioPDF, {
+    patientName,
+    reportType: report.report_type as 'clinical' | 'simplified',
+    geminiModel: report.gemini_model ?? 'gemini-2.0-flash',
+    generatedAt,
+    content: report.content,
+  }) as ReactElement<DocumentProps>
+
+  const pdfBuffer = await renderToBuffer(pdfElement)
+
+  // Safe filename
+  const safePatient = patientName
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase()
+  const typeSlug = report.report_type === 'clinical' ? 'clinico' : 'simplificado'
+  const filename = `relatorio-${typeSlug}-${safePatient}.pdf`
+
+  return new NextResponse(new Uint8Array(pdfBuffer), {
     headers: {
-      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+      'Content-Length': String(pdfBuffer.length),
     },
   })
 }
