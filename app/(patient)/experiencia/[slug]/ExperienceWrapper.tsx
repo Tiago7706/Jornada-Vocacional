@@ -18,6 +18,8 @@ import HQdaSaude from '@/components/experiences/HQdaSaude'
 import FaceAFace from '@/components/experiences/FaceAFace'
 import QuemFalaIsso from '@/components/experiences/QuemFalaIsso'
 import UmaNoiteNoMuseu from '@/components/experiences/UmaNoiteNoMuseu'
+import INSIDEexe from '@/components/experiences/INSIDEexe'
+import Engenhoso from '@/components/experiences/Engenhoso'
 
 interface Props {
   experience: Experience
@@ -221,6 +223,30 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'uma-noite-no-museu') {
     return (
       <UmaNoiteNoMuseu
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'inside-exe') {
+    return (
+      <INSIDEexe
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'engenhoso') {
+    return (
+      <Engenhoso
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
