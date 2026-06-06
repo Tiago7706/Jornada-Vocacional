@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
+import ResendInviteButton from './ResendInviteButton'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
 
 const supabaseAdmin = createAdmin(
@@ -53,6 +54,7 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
           </Button>
         </Link>
         <h1 className="text-2xl font-bold">{patient.full_name}</h1>
+        <ResendInviteButton patientId={id} />
       </div>
 
       {/* Info do paciente */}
