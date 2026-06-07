@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogIn, Loader2, MailCheck, Send } from 'lucide-react'
+import { LogIn, Loader2, MailCheck, Send, AlertCircle } from 'lucide-react'
 
 type Mode = 'password' | 'magic'
 
@@ -19,7 +19,17 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [sent, setSent] = useState(false)
+
+  // Detecta link expirado vindo do /auth/callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('erro') === 'link_expirado') {
+      setMode('magic')
+      setInfo('Seu link de acesso expirou. Digite seu e-mail abaixo para receber um novo.')
+    }
+  }, [])
 
   // --- Login com senha (admin) ---
   async function handlePasswordLogin() {
@@ -54,7 +64,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError('E-mail nao encontrado. Verifique o endereco ou fale com seu orientador.')
+      setError('Nao foi possivel enviar o link. Verifique se o e-mail esta correto ou solicite um novo convite ao seu orientador.')
       setLoading(false)
       return
     }
@@ -109,7 +119,7 @@ export default function LoginPage() {
           <div className="flex rounded-lg border overflow-hidden text-sm">
             <button
               type="button"
-              onClick={() => { setMode('password'); setError('') }}
+              onClick={() => { setMode('password'); setError(''); setInfo('') }}
               className={`flex-1 py-2 transition-colors ${
                 mode === 'password'
                   ? 'bg-primary text-primary-foreground font-semibold'
@@ -120,7 +130,7 @@ export default function LoginPage() {
             </button>
             <button
               type="button"
-              onClick={() => { setMode('magic'); setError('') }}
+              onClick={() => { setMode('magic'); setError(''); setInfo('') }}
               className={`flex-1 py-2 transition-colors ${
                 mode === 'magic'
                   ? 'bg-primary text-primary-foreground font-semibold'
@@ -175,6 +185,12 @@ export default function LoginPage() {
           {/* Formulario de magic link */}
           {mode === 'magic' && (
             <div className="space-y-4">
+              {info && (
+                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  <span>{info}</span>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email-magic">E-mail</Label>
                 <Input
