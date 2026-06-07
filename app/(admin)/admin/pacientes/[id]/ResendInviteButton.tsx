@@ -11,26 +11,32 @@ export default function ResendInviteButton({ patientId }: { patientId: string })
 
   async function handleResend() {
     setLoading(true)
-    const res = await fetch('/api/admin/reinvite', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patient_id: patientId }),
-    })
-    const data = await res.json()
-    setLoading(false)
+    try {
+      const res = await fetch('/api/admin/reinvite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_id: patientId }),
+      })
+      const data = await res.json()
 
-    if (!res.ok) {
-      toast.error(data.error || 'Erro ao reenviar link.')
-      return
+      if (!res.ok) {
+        toast.error(data.error || 'Erro ao reenviar link.')
+        return
+      }
+
+      setSent(true)
+      toast.success('Link de acesso enviado para o e-mail do paciente.')
+      setTimeout(() => setSent(false), 5000)
+    } catch {
+      toast.error('Erro de conexão. Tente novamente.')
+    } finally {
+      setLoading(false)
     }
-
-    setSent(true)
-    toast.success('Link de acesso enviado para o e-mail do paciente.')
-    setTimeout(() => setSent(false), 5000)
   }
 
   return (
     <Button
+      type="button"
       variant="outline"
       size="sm"
       onClick={handleResend}
