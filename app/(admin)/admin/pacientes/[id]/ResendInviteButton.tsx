@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Send, Loader2, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -17,7 +16,9 @@ export default function ResendInviteButton({ patientId }: { patientId: string })
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patient_id: patientId }),
       })
-      const data = await res.json()
+
+      let data: { error?: string } = {}
+      try { data = await res.json() } catch {}
 
       if (!res.ok) {
         toast.error(data.error || 'Erro ao reenviar link.')
@@ -35,20 +36,20 @@ export default function ResendInviteButton({ patientId }: { patientId: string })
   }
 
   return (
-    <Button
+    <button
       type="button"
-      variant="outline"
-      size="sm"
       onClick={handleResend}
       disabled={loading || sent}
+      style={{ pointerEvents: loading || sent ? 'none' : 'auto', opacity: loading || sent ? 0.6 : 1 }}
+      className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-muted transition-colors disabled:pointer-events-none disabled:opacity-50"
     >
       {loading ? (
-        <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Enviando...</>
+        <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...</>
       ) : sent ? (
-        <><CheckCircle2 className="h-4 w-4 mr-2 text-green-500" /> Link enviado</>
+        <><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> Link enviado</>
       ) : (
-        <><Send className="h-4 w-4 mr-2" /> Reenviar link de acesso</>
+        <><Send className="h-3.5 w-3.5" /> Reenviar link de acesso</>
       )}
-    </Button>
+    </button>
   )
 }

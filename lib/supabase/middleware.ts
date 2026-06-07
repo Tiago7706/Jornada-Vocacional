@@ -29,8 +29,8 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Rotas públicas
-  const publicRoutes = ['/login', '/aceitar-convite']
+  // Rotas públicas (auth/callback precisa ser pública: usuário chega sem sessão, só com o code)
+  const publicRoutes = ['/login', '/aceitar-convite', '/auth/callback']
   const isPublicRoute = publicRoutes.some(r => pathname.startsWith(r))
 
   if (!user && !isPublicRoute) {
