@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,8 +22,8 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false)
 
   // --- Login com senha (admin) ---
-  async function handlePasswordLogin(e: React.FormEvent) {
-    e.preventDefault()
+  async function handlePasswordLogin() {
+    if (!email || !password) return
     setLoading(true)
     setError('')
 
@@ -41,15 +40,15 @@ export default function LoginPage() {
   }
 
   // --- Login sem senha (paciente) ---
-  async function handleMagicLink(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleMagicLink() {
+    if (!email) return
     setLoading(true)
     setError('')
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        shouldCreateUser: false, // apenas usuarios ja cadastrados
+        shouldCreateUser: false,
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/painel`,
       },
     })
@@ -134,7 +133,7 @@ export default function LoginPage() {
 
           {/* Formulario de senha */}
           {mode === 'password' && (
-            <form onSubmit={handlePasswordLogin} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
                 <Input
@@ -143,7 +142,7 @@ export default function LoginPage() {
                   placeholder="seu@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  required
+                  onKeyDown={e => e.key === 'Enter' && handlePasswordLogin()}
                   disabled={loading}
                 />
               </div>
@@ -155,22 +154,27 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  required
+                  onKeyDown={e => e.key === 'Enter' && handlePasswordLogin()}
                   disabled={loading}
                 />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <button
+                type="button"
+                onClick={handlePasswordLogin}
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+              >
                 {loading
-                  ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Entrando...</>
-                  : <><LogIn className="mr-2 h-4 w-4" /> Entrar</>}
-              </Button>
-            </form>
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Entrando...</>
+                  : <><LogIn className="h-4 w-4" /> Entrar</>}
+              </button>
+            </div>
           )}
 
           {/* Formulario de magic link */}
           {mode === 'magic' && (
-            <form onSubmit={handleMagicLink} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email-magic">E-mail</Label>
                 <Input
@@ -179,20 +183,25 @@ export default function LoginPage() {
                   placeholder="seu@email.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  required
+                  onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
                   disabled={loading}
                 />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <button
+                type="button"
+                onClick={handleMagicLink}
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+              >
                 {loading
-                  ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Enviando...</>
-                  : <><Send className="mr-2 h-4 w-4" /> Enviar link de acesso</>}
-              </Button>
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Enviando...</>
+                  : <><Send className="h-4 w-4" /> Enviar link de acesso</>}
+              </button>
               <p className="text-xs text-center text-muted-foreground">
                 Voce recebera um e-mail com um link para entrar sem precisar de senha.
               </p>
-            </form>
+            </div>
           )}
 
         </CardContent>
