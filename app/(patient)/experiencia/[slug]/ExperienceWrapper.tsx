@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Construction } from 'lucide-react'
 
 // Game components
+import JornadaVocacional from '@/components/experiences/JornadaVocacional'
+import DesafioCSTFinal from '@/components/experiences/DesafioCSTFinal'
 import RiasecBattleCards from '@/components/experiences/RiasecBattleCards'
 import DecifraMente from '@/components/experiences/DecifraMente'
 import AgenciaMissaoImpossivel from '@/components/experiences/AgenciaMissaoImpossivel'
@@ -247,6 +249,30 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   if (experience.slug === 'engenhoso') {
     return (
       <Engenhoso
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'jornada-vocacional' || experience.slug === 'jornada-vocacional-v5') {
+    return (
+      <JornadaVocacional
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
+  if (experience.slug === 'desafio-cst-final') {
+    return (
+      <DesafioCSTFinal
         patientId={patientId}
         experienceId={experience.id}
         initialState={initialState}
