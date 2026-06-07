@@ -41,10 +41,11 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
   if (!patient) notFound()
 
   const progressMap = new Map(progress?.map(p => [p.experience_id, p]) ?? [])
+  const senhaAtual = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Link href="/admin/pacientes">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -54,6 +55,28 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
         <h1 className="text-2xl font-bold">{patient.full_name}</h1>
         <ResendInviteButton patientId={id} />
       </div>
+
+      {/* Acesso do paciente */}
+      <Card className="border-blue-200 bg-blue-50">
+        <CardContent className="pt-4 pb-4">
+          <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Dados de acesso para enviar ao paciente</p>
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-muted-foreground">Site: </span>
+              <span className="font-mono font-medium">jornada-vocacional.vercel.app</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">E-mail: </span>
+              <span className="font-mono font-medium">{patient.email}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Senha: </span>
+              <span className="font-mono font-medium">{senhaAtual}</span>
+            </div>
+          </div>
+          <p className="text-xs text-blue-600 mt-2">Se precisar resetar a senha, clique em "Resetar senha do paciente" acima.</p>
+        </CardContent>
+      </Card>
 
       {/* Info do paciente */}
       <div className="grid gap-4 sm:grid-cols-3">

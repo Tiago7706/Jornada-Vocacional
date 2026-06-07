@@ -1,38 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { LogIn, Loader2, MailCheck, Send, AlertCircle } from 'lucide-react'
-
-type Mode = 'password' | 'magic'
+import { LogIn, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
 
-  const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [info, setInfo] = useState('')
-  const [sent, setSent] = useState(false)
 
-  // Detecta link expirado vindo do /auth/callback
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('erro') === 'link_expirado') {
-      setMode('magic')
-      setInfo('Seu link de acesso expirou. Digite seu e-mail abaixo para receber um novo.')
-    }
-  }, [])
-
-  // --- Login com senha (admin) ---
-  async function handlePasswordLogin() {
+  async function handleLogin() {
     if (!email || !password) return
     setLoading(true)
     setError('')
@@ -49,177 +34,49 @@ export default function LoginPage() {
     router.push(role === 'admin' ? '/admin/painel' : '/painel')
   }
 
-  // --- Login sem senha (paciente) ---
-  async function handleMagicLink() {
-    if (!email) return
-    setLoading(true)
-    setError('')
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/painel`,
-      },
-    })
-
-    if (error) {
-      setError('Nao foi possivel enviar o link. Verifique se o e-mail esta correto ou solicite um novo convite ao seu orientador.')
-      setLoading(false)
-      return
-    }
-
-    setSent(true)
-    setLoading(false)
-  }
-
-  // Tela de confirmacao de envio
-  if (sent) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardHeader>
-            <MailCheck className="h-10 w-10 mx-auto text-primary mb-2" />
-            <CardTitle>Verifique seu e-mail</CardTitle>
-            <CardDescription>
-              Enviamos um link de acesso para <strong>{email}</strong>.
-              Abra o e-mail e clique no link para entrar.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              Nao recebeu? Verifique a caixa de spam ou solicite um novo link ao seu orientador.
-            </p>
-            <button
-              onClick={() => { setSent(false); setError('') }}
-              className="mt-4 text-sm text-primary underline"
-            >
-              Tentar novamente
-            </button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Jornada Vocacional</CardTitle>
-          <CardDescription>
-            {mode === 'password'
-              ? 'Entre com seu e-mail e senha'
-              : 'Receba um link de acesso no seu e-mail'}
-          </CardDescription>
+          <CardDescription>Entre com seu e-mail e senha</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-
-          {/* Seletor de modo */}
-          <div className="flex rounded-lg border overflow-hidden text-sm">
-            <button
-              type="button"
-              onClick={() => { setMode('password'); setError(''); setInfo('') }}
-              className={`flex-1 py-2 transition-colors ${
-                mode === 'password'
-                  ? 'bg-primary text-primary-foreground font-semibold'
-                  : 'bg-background text-muted-foreground hover:bg-muted'
-              }`}
-            >
-              Entrar com senha
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode('magic'); setError(''); setInfo('') }}
-              className={`flex-1 py-2 transition-colors ${
-                mode === 'magic'
-                  ? 'bg-primary text-primary-foreground font-semibold'
-                  : 'bg-background text-muted-foreground hover:bg-muted'
-              }`}
-            >
-              Entrar sem senha
-            </button>
+          <div className="space-y-2">
+            <Label htmlFor="email">E-mail</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              disabled={loading}
+            />
           </div>
-
-          {/* Formulario de senha */}
-          {mode === 'password' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handlePasswordLogin()}
-                  disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handlePasswordLogin()}
-                  disabled={loading}
-                />
-              </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <button
-                type="button"
-                onClick={handlePasswordLogin}
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-              >
-                {loading
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Entrando...</>
-                  : <><LogIn className="h-4 w-4" /> Entrar</>}
-              </button>
-            </div>
-          )}
-
-          {/* Formulario de magic link */}
-          {mode === 'magic' && (
-            <div className="space-y-4">
-              {info && (
-                <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                  <span>{info}</span>
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label htmlFor="email-magic">E-mail</Label>
-                <Input
-                  id="email-magic"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleMagicLink()}
-                  disabled={loading}
-                />
-              </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <button
-                type="button"
-                onClick={handleMagicLink}
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-              >
-                {loading
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Enviando...</>
-                  : <><Send className="h-4 w-4" /> Enviar link de acesso</>}
-              </button>
-              <p className="text-xs text-center text-muted-foreground">
-                Voce recebera um e-mail com um link para entrar sem precisar de senha.
-              </p>
-            </div>
-          )}
-
+          <div className="space-y-2">
+            <Label htmlFor="password">Senha</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              disabled={loading}
+            />
+          </div>
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <button
+            type="button"
+            onClick={handleLogin}
+            disabled={loading}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+          >
+            {loading
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> Entrando...</>
+              : <><LogIn className="h-4 w-4" /> Entrar</>}
+          </button>
         </CardContent>
       </Card>
     </div>

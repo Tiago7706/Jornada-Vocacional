@@ -15,17 +15,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Nome e e-mail sao obrigatorios.' }, { status: 400 })
     }
 
-    // Criar usuario com magic link
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-      data: { role: 'patient' },
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://jornada-vocacional.vercel.app'}/auth/callback?next=/painel`,
+    const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
+
+    // Cria usuario com senha padrao e email ja confirmado (sem magic link)
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password: senha,
+      email_confirm: true,
+      user_metadata: { role: 'patient' },
     })
 
     if (authError) {
       return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
-    // Criar registro na tabela patients
+    // Cria registro na tabela patients
     const { error: patientError } = await supabaseAdmin.from('patients').insert({
       id: authData.user.id,
       full_name,

@@ -48,11 +48,11 @@ export default function ResendInviteButton({ patientId }: { patientId: string })
         className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-muted transition-colors disabled:pointer-events-none disabled:opacity-50"
       >
         {status === 'loading' ? (
-          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...</>
+          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Processando...</>
         ) : status === 'sent' ? (
-          <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /> Link enviado!</>
+          <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /> Senha resetada!</>
         ) : (
-          <><Send className="h-3.5 w-3.5" /> Reenviar link de acesso</>
+          <><Send className="h-3.5 w-3.5" /> Resetar senha do paciente</>
         )}
       </button>
 
