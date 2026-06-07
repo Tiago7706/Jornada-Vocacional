@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import type { ReactNode } from 'react'
 import type { GameProps } from '@/types/database'
 import { CST_COURSES, type CSTCourse } from '@/constants/cst-courses'
 
@@ -261,7 +262,7 @@ export default function DesafioCSTFinal({
       return rb - ra || a.n.localeCompare(b.n)
     })
 
-    const Wrap = ({ children }: { children: React.ReactNode }) => (
+    const Wrap = ({ children }: { children: ReactNode }) => (
       <div style={{ background:'#1a1830', borderRadius:14, border:'1px solid rgba(255,255,255,.08)', padding:20, marginBottom:12 }}>
         {children}
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import type { GameProps } from '@/types/database'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -295,7 +296,7 @@ function computeResults(scores: Scores) {
 
 // ─── Illustration backgrounds ─────────────────────────────────────────────────
 
-const ILL_STYLES: Record<string, React.CSSProperties & { emoji: string }> = {
+const ILL_STYLES: Record<string, CSSProperties & { emoji: string }> = {
   city:     { background:'linear-gradient(180deg,#0a0a1a,#1a1a3a,#2a1a4a)', emoji:'🏙️' },
   forest:   { background:'linear-gradient(180deg,#0a1a0a,#0d2b0d,#1a3a1a)', emoji:'🌲' },
   lab:      { background:'linear-gradient(180deg,#0a0a1a,#0a1a2a,#0a2a2a)', emoji:'🔬' },
@@ -454,7 +455,7 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
     const bNames: Record<string,string> = { Adm:'Administração',Bio:'Ciências Biológicas',Sau:'Saúde',Hum:'Ciências Humanas',Com:'Comunicação',Art:'Artes e Design',Exa:'Ciências Exatas/TI',Eng:'Engenharia',Mil:'Carreiras Militares' }
     const mPairs: [string,string,string,string][] = [['E','I','Extroversão','Introversão'],['S','N','Sensação','Intuição'],['T','F','Pensamento','Sentimento'],['J','P','Julgamento','Percepção']]
 
-    const Wrap = ({ children }: { children: React.ReactNode }) => (
+    const Wrap = ({ children }: { children: ReactNode }) => (
       <div style={{ background:'#1e1e32', borderRadius:14, border:'1px solid rgba(255,255,255,.08)', padding:20, marginBottom:12, color:'#e2e8f0' }}>
         {children}
       </div>
