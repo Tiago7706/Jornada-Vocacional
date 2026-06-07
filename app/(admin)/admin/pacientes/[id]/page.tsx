@@ -1,5 +1,3 @@
-'use server'
-
 import { createClient as createAdmin } from '@supabase/supabase-js'
 import { notFound, redirect } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
