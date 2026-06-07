@@ -29,6 +29,11 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // Rotas de API não devem ser redirecionadas — retornam JSON de erro
+  if (pathname.startsWith('/api/')) {
+    return supabaseResponse
+  }
+
   // Rotas públicas (auth/callback precisa ser pública: usuário chega sem sessão, só com o code)
   const publicRoutes = ['/login', '/aceitar-convite', '/auth/callback']
   const isPublicRoute = publicRoutes.some(r => pathname.startsWith(r))

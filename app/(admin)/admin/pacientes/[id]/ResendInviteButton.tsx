@@ -1,55 +1,67 @@
 'use client'
 
 import { useState } from 'react'
-import { Send, Loader2, CheckCircle2 } from 'lucide-react'
-import { toast } from 'sonner'
+import { Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+
+type Status = 'idle' | 'loading' | 'sent' | 'error'
 
 export default function ResendInviteButton({ patientId }: { patientId: string }) {
-  const [loading, setLoading] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState<Status>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
 
   async function handleResend() {
-    setLoading(true)
+    setStatus('loading')
+    setErrorMsg('')
+
     try {
       const res = await fetch('/api/admin/reinvite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ patient_id: patientId }),
       })
 
-      let data: { error?: string } = {}
-      try { data = await res.json() } catch {}
+      let data: { error?: string; success?: boolean } = {}
+      const text = await res.text()
+      try { data = JSON.parse(text) } catch { /* not json */ }
 
       if (!res.ok) {
-        toast.error(data.error || 'Erro ao reenviar link.')
+        setStatus('error')
+        setErrorMsg(data.error || `Erro ${res.status}`)
         return
       }
 
-      setSent(true)
-      toast.success('Link de acesso enviado para o e-mail do paciente.')
-      setTimeout(() => setSent(false), 5000)
-    } catch {
-      toast.error('Erro de conexão. Tente novamente.')
-    } finally {
-      setLoading(false)
+      setStatus('sent')
+      setTimeout(() => setStatus('idle'), 6000)
+    } catch (err) {
+      setStatus('error')
+      setErrorMsg('Erro de conexão.')
     }
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleResend}
-      disabled={loading || sent}
-      style={{ pointerEvents: loading || sent ? 'none' : 'auto', opacity: loading || sent ? 0.6 : 1 }}
-      className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-muted transition-colors disabled:pointer-events-none disabled:opacity-50"
-    >
-      {loading ? (
-        <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...</>
-      ) : sent ? (
-        <><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> Link enviado</>
-      ) : (
-        <><Send className="h-3.5 w-3.5" /> Reenviar link de acesso</>
+    <div className="inline-flex flex-col items-start gap-1">
+      <button
+        type="button"
+        onClick={handleResend}
+        disabled={status === 'loading' || status === 'sent'}
+        className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-muted transition-colors disabled:pointer-events-none disabled:opacity-50"
+      >
+        {status === 'loading' ? (
+          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...</>
+        ) : status === 'sent' ? (
+          <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /> Link enviado!</>
+        ) : (
+          <><Send className="h-3.5 w-3.5" /> Reenviar link de acesso</>
+        )}
+      </button>
+
+      {status === 'error' && (
+        <span className="inline-flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3 w-3" />
+          {errorMsg}
+        </span>
       )}
-    </button>
+    </div>
   )
 }
