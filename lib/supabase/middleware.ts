@@ -2,6 +2,14 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Rotas de API usam service-role key e não precisam de sessão SSR.
+  // Bypass ANTES de qualquer chamada ao Supabase Auth para evitar latência.
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -25,14 +33,8 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // getUser() atualiza a sessão e verifica o token — necessário para páginas
   const { data: { user } } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
-
-  // Rotas de API não devem ser redirecionadas — retornam JSON de erro
-  if (pathname.startsWith('/api/')) {
-    return supabaseResponse
-  }
 
   // Rotas públicas (auth/callback precisa ser pública: usuário chega sem sessão, só com o code)
   const publicRoutes = ['/login', '/aceitar-convite', '/auth/callback']

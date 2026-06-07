@@ -11,16 +11,16 @@ export const dynamic = 'force-dynamic'
 // Ensure Node.js runtime — @react-pdf/renderer uses canvas/Node APIs
 export const runtime = 'nodejs'
 
-const supabaseAdmin = createAdmin(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-)
-
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const supabaseAdmin = createAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
+
   // Auth guard — admin only
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

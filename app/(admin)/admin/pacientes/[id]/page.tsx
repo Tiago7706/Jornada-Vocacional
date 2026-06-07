@@ -1,9 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdmin } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -11,12 +9,6 @@ import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import ResendInviteButton from './ResendInviteButton'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
-
-const supabaseAdmin = createAdmin(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-)
 
 const statusIcon = {
   locked: Lock,
@@ -27,6 +19,12 @@ const statusIcon = {
 
 export default async function PatientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+
+  const supabaseAdmin = createAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
 
   const [{ data: patient }, { data: experiences }, { data: progress }, { data: scores }] = await Promise.all([
     supabaseAdmin.from('patients').select('*').eq('id', id).single(),
