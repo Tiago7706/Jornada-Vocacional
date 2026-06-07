@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
       patient.email,
       {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://jornada-vocacional.vercel.app'}/aceitar-convite`,
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://jornada-vocacional.vercel.app'}/auth/callback?next=/painel`,
       }
     )
 

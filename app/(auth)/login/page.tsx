@@ -50,7 +50,7 @@ export default function LoginPage() {
       email,
       options: {
         shouldCreateUser: false, // apenas usuarios ja cadastrados
-        emailRedirectTo: `${window.location.origin}/aceitar-convite`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/painel`,
       },
     })
 

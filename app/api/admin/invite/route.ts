@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     // Criar usuario com magic link
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: { role: 'patient' },
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/aceitar-convite`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://jornada-vocacional.vercel.app'}/auth/callback?next=/painel`,
     })
 
     if (authError) {
