@@ -77,7 +77,13 @@ export default async function PatientPainelPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredExperiences.map(exp => {
           const pe = progressMap.get(exp.id)
-          const status = pe?.status ?? 'locked'
+          const patientMax = patient?.max_experience_unlocked ?? 0
+          const status: string =
+            pe?.status === 'completed' || pe?.status === 'in_progress'
+              ? pe.status
+              : exp.order_index <= patientMax
+                ? 'unlocked'
+                : 'locked'
           const cfg = statusConfig[status]
           const Icon = experienceIcons[exp.id] ?? Circle
           const StatusIcon = cfg.icon
