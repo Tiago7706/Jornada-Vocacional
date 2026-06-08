@@ -179,15 +179,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'jogo-da-memoria') {
-    return (
-      <JogoDaMemoria
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/jogo-da-memoria.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'expedicao-cientifica') {
