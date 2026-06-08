@@ -41,7 +41,7 @@ export default function NovoPacientePage() {
       const data = await res.json()
 
       if (!res.ok) {
-        toast.error(data.error ?? 'Erro ao cadastrar paciente.')
+        toast.error(data.error ?? 'Erro ao cadastrar participante.')
         return
       }
 
@@ -63,12 +63,12 @@ export default function NovoPacientePage() {
             Voltar
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Novo Paciente</h1>
+        <h1 className="text-2xl font-bold">Novo Participante</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Dados do paciente</CardTitle>
+          <CardTitle className="text-base">Dados do participante</CardTitle>
           <CardDescription>
             Apos o cadastro, um e-mail de convite sera enviado automaticamente.
           </CardDescription>

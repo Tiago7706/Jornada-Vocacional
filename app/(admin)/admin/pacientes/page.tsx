@@ -17,11 +17,11 @@ export default async function PacientesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Pacientes</h1>
+        <h1 className="text-2xl font-bold">Participantes</h1>
         <Link href="/admin/pacientes/novo">
           <Button size="sm">
             <UserPlus className="h-4 w-4 mr-2" />
-            Novo Paciente
+            Novo Participante
           </Button>
         </Link>
       </div>
@@ -58,11 +58,11 @@ export default async function PacientesPage() {
             ))}
             {!patients?.length && (
               <div className="px-6 py-12 text-center">
-                <p className="text-sm text-muted-foreground">Nenhum paciente cadastrado ainda.</p>
+                <p className="text-sm text-muted-foreground">Nenhum participante cadastrado ainda.</p>
                 <Link href="/admin/pacientes/novo" className="mt-2 inline-block">
                   <Button size="sm" variant="outline" className="mt-3">
                     <UserPlus className="h-4 w-4 mr-2" />
-                    Cadastrar primeiro paciente
+                    Cadastrar primeiro participante
                   </Button>
                 </Link>
               </div>

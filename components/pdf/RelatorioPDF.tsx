@@ -234,7 +234,7 @@ export default function RelatorioPDF({
           <Text style={styles.headerTitle}>{typeLabel}</Text>
           <Text style={styles.headerTag}>Orientação Profissional Gamificada</Text>
           <Text style={styles.headerMeta}>
-            {`Paciente: ${patientName}\nGerado em: ${generatedAt}\nModelo IA: ${geminiModel}`}
+            {`Participante: ${patientName}\nGerado em: ${generatedAt}\nModelo IA: ${geminiModel}`}
           </Text>
         </View>
 

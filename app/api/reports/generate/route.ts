@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
 
   const { patientId, reportType }: { patientId: string; reportType: ReportType } = await req.json()
 
-  // Buscar dados do paciente
+  // Buscar dados do participante
   const [{ data: patient }, { data: scores }, { data: prompt }] = await Promise.all([
     supabaseAdmin.from('patients').select('*').eq('id', patientId).single(),
     supabaseAdmin.from('experience_scores').select('*, experiences(title, slug)').eq('patient_id', patientId),
     supabaseAdmin.from('report_prompts').select('template').eq('prompt_type', reportType).single(),
   ])
 
-  if (!patient) return NextResponse.json({ error: 'Paciente nao encontrado.' }, { status: 404 })
+  if (!patient) return NextResponse.json({ error: 'Participante nao encontrado.' }, { status: 404 })
   if (!prompt) return NextResponse.json({ error: 'Template de prompt nao configurado.' }, { status: 404 })
 
   // Montar o prompt

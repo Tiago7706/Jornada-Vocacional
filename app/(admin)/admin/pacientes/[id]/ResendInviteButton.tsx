@@ -52,7 +52,7 @@ export default function ResendInviteButton({ patientId }: { patientId: string })
         ) : status === 'sent' ? (
           <><CheckCircle2 className="h-3.5 w-3.5 text-green-600" /> Senha resetada!</>
         ) : (
-          <><Send className="h-3.5 w-3.5" /> Resetar senha do paciente</>
+          <><Send className="h-3.5 w-3.5" /> Resetar senha do participante</>
         )}
       </button>
 

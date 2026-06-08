@@ -22,12 +22,12 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (patientError || !patient) {
-      return NextResponse.json({ error: 'Paciente nao encontrado.' }, { status: 404 })
+      return NextResponse.json({ error: 'Participante nao encontrado.' }, { status: 404 })
     }
 
     const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
 
-    // Reseta a senha do paciente para a senha padrao e confirma o email
+    // Reseta a senha do participante para a senha padrao e confirma o email
     const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       patient_id,
       {

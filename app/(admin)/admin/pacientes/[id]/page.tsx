@@ -92,7 +92,7 @@ export default async function PatientDetailPage({
       <Card className="border-blue-200 bg-blue-50">
         <CardContent className="pt-4 pb-4 space-y-3">
           <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">
-            Dados de acesso — envie ao paciente
+            Dados de acesso — envie ao participante
           </p>
           <div className="flex flex-wrap gap-6 text-sm">
             <div>
@@ -122,7 +122,7 @@ export default async function PatientDetailPage({
         </CardContent>
       </Card>
 
-      {/* Info do paciente */}
+      {/* Info do participante */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-6">

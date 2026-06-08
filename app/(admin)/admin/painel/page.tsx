@@ -50,7 +50,7 @@ export default async function AdminPainelPage() {
   const inProgressCount = Object.values(byPatient).filter(n => n > 0 && n < TOTAL_EXPERIENCES).length
 
   const stats = [
-    { title: 'Total de Pacientes', value: totalPatients ?? 0,  icon: Users         },
+    { title: 'Total de Participantes', value: totalPatients ?? 0,  icon: Users         },
     { title: 'Ativos hoje',        value: activeToday ?? 0,    icon: Activity      },
     { title: 'Concluíram',         value: completedCount,       icon: CheckCircle2  },
     { title: 'Em andamento',       value: inProgressCount,      icon: Clock         },
@@ -77,7 +77,7 @@ export default async function AdminPainelPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Pacientes Recentes</CardTitle>
+            <CardTitle className="text-base">Participantes Recentes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -98,7 +98,7 @@ export default async function AdminPainelPage() {
                 </Link>
               ))}
               {!recentPatients?.length && (
-                <p className="text-sm text-muted-foreground">Nenhum paciente cadastrado.</p>
+                <p className="text-sm text-muted-foreground">Nenhum participante cadastrado.</p>
               )}
             </div>
           </CardContent>

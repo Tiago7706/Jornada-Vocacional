@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 
 const navItems = [
   { href: '/admin/painel', label: 'Painel', icon: LayoutDashboard },
-  { href: '/admin/pacientes', label: 'Pacientes', icon: Users },
+  { href: '/admin/pacientes', label: 'Participantes', icon: Users },
   { href: '/admin/configuracoes/prompts', label: 'Configuracoes', icon: Settings },
 ]
 

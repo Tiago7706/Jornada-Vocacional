@@ -68,7 +68,7 @@ export default function PromptsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Variaveis disponiveis</CardTitle>
-          <CardDescription>Use estas variaveis nos templates — serao substituidas pelos dados do paciente.</CardDescription>
+          <CardDescription>Use estas variaveis nos templates — serao substituidas pelos dados do participante.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2 sm:grid-cols-2">
