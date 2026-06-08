@@ -791,11 +791,9 @@ function showResult(){
   // Nota
   document.getElementById('r-tipo-note').textContent=tipo;
 
-  // WhatsApp
-  document.getElementById('r-wa').onclick=function(){
-    var msg='Oi! Terminei o DecifraMente!\n\nMeu tipo MBTI: *'+tipo+'*\nPerfil: *'+v.n+'*\n\n_Gerado pelo DecifraMente - Orientacao Vocacional_';
-    window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
-  };
+  // Botao salvar (antigo WhatsApp, agora salva no app)
+  var rwaEl = document.getElementById('r-wa') || document.getElementById('r-salvar');
+  if(rwaEl) rwaEl.onclick = salvarEContinuar;
 
   document.getElementById('result').style.display='flex';
   // Enviar resultado ao app (iframe postMessage)
