@@ -12,10 +12,11 @@ export async function GET() {
 
   const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
 
-  // Buscar todos os pacientes
+  // Buscar todos os pacientes (excluindo admins pelo role no user_metadata)
   const { data: patients, error } = await supabaseAdmin
     .from('patients')
     .select('id, email, full_name')
+    .neq('id', '505474de-28ae-4bd8-8a09-7b9fbe04123c') // excluir conta admin
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
