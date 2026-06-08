@@ -401,6 +401,7 @@ export default function AgenciaMissaoImpossivel({
       setScores(newScores)
 
       addTimer(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         if (moment < 2) {
           setMoment(((moment + 1) as MomentIdx))
         } else if (missionIdx < MISSIONS.length - 1) {
