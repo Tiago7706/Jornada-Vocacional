@@ -323,10 +323,14 @@ export default function AgenciaMissaoImpossivel({
   onComplete,
 }: GameProps) {
   // ── State init from saved game ───────────────────────────────────────────
-  const [screen, setScreen] = useState<Screen>(() => {
-    const s = initialState?.screen as Screen | undefined
-    return s === 'game' || s === 'result' ? s : 'title'
-  })
+  // Always start at title so cover/instructions are always visible.
+  // hasSavedProgress detects whether to show "Continuar" or "Aceitar recrutamento".
+  const hasSavedProgress = !!(
+    initialState?.screen === 'game' ||
+    initialState?.screen === 'result' ||
+    (typeof initialState?.missionIdx === 'number' && (initialState.missionIdx as number) > 0)
+  )
+  const [screen, setScreen] = useState<Screen>('title')
   const [missionIdx, setMissionIdx] = useState<number>(
     typeof initialState?.missionIdx === 'number' ? initialState.missionIdx : 0
   )
@@ -460,9 +464,15 @@ export default function AgenciaMissaoImpossivel({
             <span className={styles.chip}>8–10 min</span>
             <span className={styles.chip}>Confidencial</span>
           </div>
-          <button className={styles.btnPrimary} onClick={() => setScreen('instrucoes')}>
-            Aceitar recrutamento →
-          </button>
+          {hasSavedProgress ? (
+            <button className={styles.btnPrimary} onClick={() => setScreen('game')}>
+              Continuar missão →
+            </button>
+          ) : (
+            <button className={styles.btnPrimary} onClick={() => setScreen('instrucoes')}>
+              Aceitar recrutamento →
+            </button>
+          )}
           </div>
         </div>
       </div>
