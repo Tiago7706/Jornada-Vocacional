@@ -441,7 +441,13 @@ export default function AgenciaMissaoImpossivel({
     return (
       <div className={styles.root}>
         <div className={styles.heroSection}>
-          <div className={styles.badge}>Ultra Confidencial</div>
+          <div
+            className={styles.coverBg}
+            style={{ backgroundImage: "url('/games/agencia-imgs/cover.jpeg')" }}
+          />
+          <div className={styles.coverOverlay} />
+          <div className={styles.coverContent}>
+          <div className={styles.badge}>🔴 Ultra Confidencial</div>
           <h1 className={styles.heroTitle}>
             AGÊNCIA<br /><span>MISSÃO POSSÍVEL?</span>
           </h1>
@@ -457,6 +463,7 @@ export default function AgenciaMissaoImpossivel({
           <button className={styles.btnPrimary} onClick={() => setScreen('instrucoes')}>
             Aceitar recrutamento →
           </button>
+          </div>
         </div>
       </div>
     )
@@ -577,9 +584,15 @@ export default function AgenciaMissaoImpossivel({
 
       <div className={styles.page}>
         <div className={styles.missionCard}>
-          <div className={styles.missionHeader}>
-            <span className={styles.missionNum}>Missão {missionIdx + 1} de 9</span>
-            <span className={styles.missionArea}>{mission.area}</span>
+          <div
+            className={styles.missionHero}
+            style={{ backgroundImage: `url('/games/agencia-imgs/mission-${missionIdx + 1}.jpeg')` }}
+          >
+            <div className={styles.missionHeroOverlay} />
+            <div className={styles.missionHeroContent}>
+              <div className={styles.missionNum}>Missão {missionIdx + 1} de 9</div>
+              <div className={styles.missionArea}>{mission.area}</div>
+            </div>
           </div>
 
           <div className={styles.missionBody}>
