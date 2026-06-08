@@ -464,15 +464,9 @@ export default function AgenciaMissaoImpossivel({
             <span className={styles.chip}>8–10 min</span>
             <span className={styles.chip}>Confidencial</span>
           </div>
-          {hasSavedProgress ? (
-            <button className={styles.btnPrimary} onClick={() => setScreen('game')}>
-              Continuar missão →
-            </button>
-          ) : (
-            <button className={styles.btnPrimary} onClick={() => setScreen('instrucoes')}>
-              Aceitar recrutamento →
-            </button>
-          )}
+          <button className={styles.btnPrimary} onClick={() => setScreen('instrucoes')}>
+            Aceitar recrutamento →
+          </button>
           </div>
         </div>
       </div>
@@ -518,13 +512,28 @@ export default function AgenciaMissaoImpossivel({
             </div>
           </div>
 
-          <button
-            className={styles.btnPrimary}
-            style={{ marginTop: '1.5rem' }}
-            onClick={() => setScreen('game')}
-          >
-            Iniciar operação →
-          </button>
+          {hasSavedProgress ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: '1.5rem' }}>
+              <button className={styles.btnPrimary} onClick={() => setScreen('game')}>
+                Continuar missão →
+              </button>
+              <button className={styles.btnBack} onClick={() => {
+                setMissionIdx(0); setMoment(0)
+                setChoices({}); setScores(makeDefaultScores())
+                setScreen('game')
+              }}>
+                Recomeçar do zero
+              </button>
+            </div>
+          ) : (
+            <button
+              className={styles.btnPrimary}
+              style={{ marginTop: '1.5rem' }}
+              onClick={() => setScreen('game')}
+            >
+              Iniciar operação →
+            </button>
+          )}
         </div>
       </div>
     )
