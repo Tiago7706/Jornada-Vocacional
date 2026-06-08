@@ -163,15 +163,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'super-quem') {
-    return (
-      <SuperQuem
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/super-quem.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'agencia-missao-impossivel') {
