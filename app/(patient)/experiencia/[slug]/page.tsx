@@ -41,11 +41,15 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
   }
 
   return (
-    <ExperienceWrapper
-      experience={experience}
-      patientId={user.id}
-      initialState={pe?.game_state ?? undefined}
-      isCompleted={status === 'completed'}
-    />
+    <div style={{ background: '#f5f5f5', minHeight: 'calc(100vh - 56px)', margin: '0 -1rem -2rem' }}>
+      <div style={{ maxWidth: 430, margin: '0 auto', background: '#fff', minHeight: 'calc(100vh - 56px)', position: 'relative' }}>
+        <ExperienceWrapper
+          experience={experience}
+          patientId={user.id}
+          initialState={pe?.game_state ?? undefined}
+          isCompleted={status === 'completed'}
+        />
+      </div>
+    </div>
   )
 }
