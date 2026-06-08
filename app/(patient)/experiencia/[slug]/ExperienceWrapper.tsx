@@ -7,6 +7,38 @@ import type { Experience } from '@/types/database'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Construction } from 'lucide-react'
 
+// ── Iframe game wrapper ────────────────────────────────────────────────────────
+function IframeGame({
+  src,
+  onComplete,
+}: {
+  src: string
+  onComplete: (scores: Record<string, unknown>, responses: Record<string, unknown>) => void
+}) {
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type === 'game-complete') {
+        onComplete(event.data.scores ?? {}, {})
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [onComplete])
+
+  return (
+    <iframe
+      src={src}
+      style={{
+        width: '100%',
+        height: 'calc(100vh - 56px)',
+        border: 'none',
+        display: 'block',
+      }}
+      allow="autoplay"
+    />
+  )
+}
+
 // Game components
 import JornadaVocacional from '@/components/experiences/JornadaVocacional'
 import DesafioCSTFinal from '@/components/experiences/DesafioCSTFinal'
@@ -127,15 +159,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'decifra-mente') {
-    return (
-      <DecifraMente
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/decifra-mente.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'super-quem') {
