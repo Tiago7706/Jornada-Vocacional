@@ -801,13 +801,6 @@ function mostrarResultado(){
 
   document.getElementById('res-ranking').innerHTML=html;
 
-  // Botão WhatsApp
-  var rankingCompleto=ranking.map(function(r,i){return (i+1)+'º '+r.nome+' ('+r.pts+'★)';}).join('\n');
-  var msg='Olá! Terminei o Jogo da Memória de Orientação Vocacional! 🃏\n\n*Área: Administração, Negócios e Serviços*\n\n*Ranking completo de interesse:*\n'+rankingCompleto+'\n\n_Gerado pelo jogo de orientação vocacional_ ✨';
-  document.getElementById('res-wa').onclick=function(){
-    window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
-  };
-
   document.getElementById('resultado').classList.add('open');
 }
 
