@@ -840,10 +840,6 @@ function salvarEContinuar(){
   });
   try{window.parent.postMessage({type:'game-complete',scores:scoresOut},'*');}catch(e){}
 }
-  txt+='\n_INSIDE.exe \u2014 Orienta\u00e7\u00e3o Vocacional_ \uD83C\uDF93';
-  window.open('https://wa.me/5551996978563?text='+encodeURIComponent(txt));
-  document.getElementById('msg-wa').style.display='block';
-}
 function novaPartida(){
   interesse={};
   if(typeof stopAllMusic==='function')stopAllMusic();
