@@ -228,15 +228,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'uma-noite-no-museu') {
-    return (
-      <UmaNoiteNoMuseu
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/uma-noite-no-museu.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'inside-exe') {
