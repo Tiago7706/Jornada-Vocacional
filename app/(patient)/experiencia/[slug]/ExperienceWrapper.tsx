@@ -232,15 +232,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'inside-exe') {
-    return (
-      <INSIDEexe
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/inside-exe.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'engenhoso') {
