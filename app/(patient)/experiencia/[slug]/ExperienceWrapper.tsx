@@ -192,15 +192,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'hq-da-saude') {
-    return (
-      <HQdaSaude
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/hq-da-saude.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'face-a-face') {
