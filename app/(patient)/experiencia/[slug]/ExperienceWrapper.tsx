@@ -188,15 +188,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'expedicao-cientifica') {
-    return (
-      <ExpedicaoCientifica
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/expedicao-cientifica.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'hq-da-saude') {
