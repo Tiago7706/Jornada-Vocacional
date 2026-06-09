@@ -147,6 +147,7 @@ body{background:#000;font-family:'Share Tech Mono',monospace;overflow:hidden;wid
 </div>
 <script>
 var _jaFoiSalvo = false;
+var _viuAvDireta = false; // veio pelo "Ir Direto para Avaliação"
 
 const CURSOS = [
   {
@@ -425,6 +426,7 @@ function tpx(c,r){ return {x:OX+c*TS+TS/2, y:OY+r*TS+TS/2}; }
 // ── SETUP ──────────────────────────────────────────────────────────
 
 function irDiretoAvaliacao(){
+  _viuAvDireta = true;
   document.getElementById('screen-intro').style.display='none';
   // Marcar todas as vitaminas como coletadas
   coletadas=VITS.map(function(v){return v.id;});
@@ -839,10 +841,16 @@ function mostrarRanking(){
 function atualizarBotoesRanking(){
   var p=document.getElementById("btn-rank-primary");
   var s=document.getElementById("btn-rank-secondary");
-  if(!_jaFoiSalvo){
+  if(_viuAvDireta && !_jaFoiSalvo){
+    // Veio por avaliação direta — só mostra encerrar
+    p.style.display="none";
+    s.textContent="✔ SALVAR E ENCERRAR JOGO"; s.onclick=salvarEEncerrar;
+  } else if(!_jaFoiSalvo){
+    p.style.display="block";
     p.textContent="▶ SALVAR E CONTINUAR JOGANDO"; p.onclick=salvarEContinuarJogando;
     s.textContent="✔ SALVAR E ENCERRAR JOGO";    s.onclick=salvarEEncerrar;
   } else {
+    p.style.display="block";
     p.textContent="▶ CONTINUAR JOGANDO";  p.onclick=continuarJogando;
     s.textContent="✖ ENCERRAR PARTIDA";   s.onclick=encerrarPartida;
   }
@@ -872,6 +880,7 @@ function encerrarPartida(){
 }
 
 function novaPartida(){
+  _viuAvDireta = false; // reset ao voltar ao início
   if(!_jaFoiSalvo){ interesse={}; } // preserva avaliação se já foi salva
   if(typeof stopAllMusic==="function")stopAllMusic();
   document.getElementById("screen-rank").style.display="none";
