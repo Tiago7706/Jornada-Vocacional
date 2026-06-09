@@ -448,7 +448,7 @@ function startGame(){
   window.addEventListener('keydown',onKey);
   window.addEventListener('keyup',onKeyUp);
   setupCtrl();
-  round=1; interesse={}; coletadas=[];
+  round=1; if(!_jaFoiSalvo){ interesse={}; } coletadas=[]; // preserva avaliação
   startRound(1);
 }
 
@@ -596,10 +596,9 @@ function iniciarCartas(){
 }
 
 function proxCarta(){
-  if(fila.length===0){
-    setTimeout(mostrarRanking,200);
-    return;
-  }
+  // Pular cursos já avaliados
+  while(fila.length>0 && interesse[fila[0].id]){ fila.shift(); }
+  if(fila.length===0){ setTimeout(mostrarRanking,200); return; }
   var curso=fila.shift(); cartaAtual=curso; star=0;
   var tot=coletadas.length, rest=fila.length, cur=tot-rest;
   document.getElementById('c-pg').textContent='Curso '+cur+' de '+tot;
@@ -873,7 +872,7 @@ function encerrarPartida(){
 }
 
 function novaPartida(){
-  interesse={};
+  if(!_jaFoiSalvo){ interesse={}; } // preserva avaliação se já foi salva
   if(typeof stopAllMusic==="function")stopAllMusic();
   document.getElementById("screen-rank").style.display="none";
   document.getElementById("screen-intro").style.display="flex";
