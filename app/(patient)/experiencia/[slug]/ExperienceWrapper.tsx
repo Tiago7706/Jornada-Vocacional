@@ -12,10 +12,12 @@ function IframeGame({
   src,
   onComplete,
   onSave,
+  onExit,
 }: {
   src: string
   onComplete: (scores: Record<string, unknown>, responses: Record<string, unknown>) => void
   onSave?: (scores: Record<string, unknown>) => void
+  onExit?: () => void
 }) {
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -25,10 +27,13 @@ function IframeGame({
       if (event.data?.type === 'game-save') {
         onSave?.(event.data.scores ?? {})
       }
+      if (event.data?.type === 'game-exit') {
+        onExit?.()
+      }
     }
     window.addEventListener('message', handleMessage)
     return () => window.removeEventListener('message', handleMessage)
-  }, [onComplete, onSave])
+  }, [onComplete, onSave, onExit])
 
   return (
     <iframe
@@ -108,6 +113,12 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
       })
     }, 2000)
   }, [experience.id])
+
+  // onExit: navigate to painel without saving (used when player already saved and wants to exit)
+  const handleExit = useCallback(() => {
+    router.push('/painel')
+    router.refresh()
+  }, [router])
 
   // onSave: save scores silently without navigating (used when player continues playing)
   const handleSilentSave = useCallback(async (scores: Record<string, unknown>) => {
@@ -232,7 +243,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'inside-exe') {
-    return <IframeGame src="/games/inside-exe.html" onComplete={handleComplete} />
+    return <IframeGame src="/games/inside-exe.html" onComplete={handleComplete} onSave={handleSilentSave} onExit={handleExit} />
   }
 
   if (experience.slug === 'engenhoso') {

@@ -141,11 +141,13 @@ body{background:#000;font-family:'Share Tech Mono',monospace;overflow:hidden;wid
     <div class="rt">SISTEMA PROCESSADO</div>
     <div class="rs">Ci&ecirc;ncias Exatas &amp; Inform&aacute;tica</div>
     <div id="rank-lista"></div>
-    <button class="bwa" onclick="salvarEContinuar()">✔ SALVAR E CONTINUAR</button>
-    <button class="bnv" onclick="novaPartida()">&#128260; Nova Partida</button>
+    <button class="bwa" id="btn-rank-primary">▶ SALVAR E CONTINUAR JOGANDO</button>
+    <button class="bnv" id="btn-rank-secondary">✔ SALVAR E ENCERRAR JOGO</button>
   </div>
 </div>
 <script>
+var _jaFoiSalvo = false;
+
 const CURSOS = [
   {
     id:'astronomia', nome:'Astronomia', emoji:'⭐', cor:'#FFD700', corBg:'#1a1500',
@@ -831,20 +833,57 @@ function mostrarRanking(){
     sem.forEach(function(c){h+='<div class="ri" style="opacity:.35"><div class="rp" style="color:#334455">—</div><div style="font-size:17px">'+c.emoji+'</div><div style="flex:1"><div class="rn" style="color:#334455">'+c.nome+'</div></div></div>';});
   }
   document.getElementById('rank-lista').innerHTML=h;
+  atualizarBotoesRanking();
 }
 
-function salvarEContinuar(){
-  var scoresOut={};
-  Object.values(interesse).forEach(function(it){
-    scoresOut[it.nome]=it.stars;
-  });
-  try{window.parent.postMessage({type:'game-complete',scores:scoresOut},'*');}catch(e){}
+// ── BOTÕES RANKING ─────────────────────────────────────────
+function atualizarBotoesRanking(){
+  var p=document.getElementById("btn-rank-primary");
+  var s=document.getElementById("btn-rank-secondary");
+  if(!_jaFoiSalvo){
+    p.textContent="▶ SALVAR E CONTINUAR JOGANDO"; p.onclick=salvarEContinuarJogando;
+    s.textContent="✔ SALVAR E ENCERRAR JOGO";    s.onclick=salvarEEncerrar;
+  } else {
+    p.textContent="▶ CONTINUAR JOGANDO";  p.onclick=continuarJogando;
+    s.textContent="✖ ENCERRAR PARTIDA";   s.onclick=encerrarPartida;
+  }
 }
+
+function _buildScores(){
+  var out={};
+  Object.values(interesse).forEach(function(it){ out[it.nome]=it.stars; });
+  return out;
+}
+
+function salvarEContinuarJogando(){
+  try{window.parent.postMessage({type:"game-save",scores:_buildScores()},"*");}catch(e){}
+  _jaFoiSalvo=true;
+  mostrarToastSalvo();
+  novaPartida();
+}
+
+function salvarEEncerrar(){
+  try{window.parent.postMessage({type:"game-complete",scores:_buildScores()},"*");}catch(e){}
+}
+
+function continuarJogando(){ novaPartida(); }
+
+function encerrarPartida(){
+  try{window.parent.postMessage({type:"game-exit"},"*");}catch(e){}
+}
+
 function novaPartida(){
   interesse={};
-  if(typeof stopAllMusic==='function')stopAllMusic();
-  document.getElementById('screen-rank').style.display='none';
-  document.getElementById('screen-intro').style.display='flex';
+  if(typeof stopAllMusic==="function")stopAllMusic();
+  document.getElementById("screen-rank").style.display="none";
+  document.getElementById("screen-intro").style.display="flex";
+}
+
+function mostrarToastSalvo(){
+  var t=document.getElementById("toast-salvo");
+  if(!t)return;
+  t.classList.add("visivel");
+  setTimeout(function(){t.classList.remove("visivel");},3000);
 }
 
 // TRILHA CYBERPUNK — Web Audio API (Robusto)
@@ -1073,5 +1112,7 @@ document.addEventListener('visibilitychange', () => {
 
 
 </script>
+<div id="toast-salvo" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#22c55e;color:#fff;font-family:'Orbitron',monospace;font-weight:700;font-size:12px;padding:12px 24px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:9999;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;">✔ PROGRESSO SALVO!</div>
+<style>#toast-salvo.visivel{opacity:1;transform:translateX(-50%) translateY(0)}</style>
 </body>
 </html>
