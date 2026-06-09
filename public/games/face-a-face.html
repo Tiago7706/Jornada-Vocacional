@@ -1834,17 +1834,27 @@ function mostrarRanking() {
   document.getElementById('ranking-overlay').classList.add('ativo');
 }
 
-function salvarEContinuar() {
+function _buildScores() {
   var scoresOut = {};
-  var todos = Object.entries(estado.interesseRegistrado);
-  todos.forEach(function(entry) {
+  Object.entries(estado.interesseRegistrado).forEach(function(entry) {
     var p = personagens.find(function(x){ return x.id === entry[0]; });
     if (p) scoresOut[p.nome] = entry[1];
   });
-  try { window.parent.postMessage({type: 'game-complete', scores: scoresOut}, '*'); } catch(e) {}
+  return scoresOut;
+}
+
+function salvarSilencioso() {
+  // Salva a avaliação no banco sem sair do jogo
+  try { window.parent.postMessage({type: 'game-save', scores: _buildScores()}, '*'); } catch(e) {}
+}
+
+function salvarEContinuar() {
+  // Salva e navega de volta ao painel
+  try { window.parent.postMessage({type: 'game-complete', scores: _buildScores()}, '*'); } catch(e) {}
 }
 
 function novaPartidaDoRanking() {
+  salvarSilencioso(); // garante que a avaliação fica salva mesmo que o participante continue jogando
   document.getElementById('ranking-overlay').classList.remove('ativo');
   estado.primeiraPartida = false;
   novaPartida();

@@ -11,19 +11,24 @@ import { Construction } from 'lucide-react'
 function IframeGame({
   src,
   onComplete,
+  onSave,
 }: {
   src: string
   onComplete: (scores: Record<string, unknown>, responses: Record<string, unknown>) => void
+  onSave?: (scores: Record<string, unknown>) => void
 }) {
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === 'game-complete') {
         onComplete(event.data.scores ?? {}, {})
       }
+      if (event.data?.type === 'game-save') {
+        onSave?.(event.data.scores ?? {})
+      }
     }
     window.addEventListener('message', handleMessage)
     return () => window.removeEventListener('message', handleMessage)
-  }, [onComplete])
+  }, [onComplete, onSave])
 
   return (
     <iframe
@@ -102,6 +107,25 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
         body: JSON.stringify({ experienceId: experience.id, game_state: state }),
       })
     }, 2000)
+  }, [experience.id])
+
+  // onSave: save scores silently without navigating (used when player continues playing)
+  const handleSilentSave = useCallback(async (scores: Record<string, unknown>) => {
+    try {
+      await fetch('/api/game-state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          experienceId: experience.id,
+          game_state: {},
+          status: 'completed',
+          scores,
+          responses: {},
+        }),
+      })
+    } catch {
+      // silently ignore — player is still in the game
+    }
   }, [experience.id])
 
   // onComplete: save scores to DB, then let the game component handle navigation
@@ -196,7 +220,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'face-a-face') {
-    return <IframeGame src="/games/face-a-face.html?v=2" onComplete={handleComplete} />
+    return <IframeGame src="/games/face-a-face.html?v=3" onComplete={handleComplete} onSave={handleSilentSave} />
   }
 
   if (experience.slug === 'quem-fala-isso') {
