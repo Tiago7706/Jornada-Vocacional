@@ -29,10 +29,15 @@ function IframeGame({
     <iframe
       src={src}
       style={{
-        width: '100%',
+        position: 'fixed',
+        top: 56,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
         height: 'calc(100vh - 56px)',
         border: 'none',
-        display: 'block',
+        zIndex: 40,
       }}
       allow="autoplay"
     />
