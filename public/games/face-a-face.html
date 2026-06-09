@@ -1846,6 +1846,14 @@ function _buildScores() {
 function salvarSilencioso() {
   // Salva a avaliação no banco sem sair do jogo
   try { window.parent.postMessage({type: 'game-save', scores: _buildScores()}, '*'); } catch(e) {}
+  mostrarToastSalvo();
+}
+
+function mostrarToastSalvo() {
+  var t = document.getElementById('toast-salvo');
+  if (!t) return;
+  t.classList.add('visivel');
+  setTimeout(function() { t.classList.remove('visivel'); }, 3000);
 }
 
 function salvarEContinuar() {
@@ -2298,5 +2306,31 @@ function fecharModalMaquinaEAbrirCartas() {
   }
 }
 </script>
+<div id="toast-salvo" style="
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #22c55e;
+  color: #fff;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+">✔ Avaliação salva!</div>
+
+<style>
+#toast-salvo.visivel {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+</style>
 </body>
 </html>
