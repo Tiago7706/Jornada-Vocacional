@@ -196,7 +196,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'face-a-face') {
-    return <IframeGame src="/games/face-a-face.html" onComplete={handleComplete} />
+    return <IframeGame src="/games/face-a-face.html?v=2" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'quem-fala-isso') {

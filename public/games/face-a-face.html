@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Face a Face — Ciências Humanas e Sociais</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap');
@@ -423,9 +426,11 @@ body {
   inset: 0;
   background: rgba(0,0,0,0.7);
   z-index: 100;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .overlay.ativo { display: flex; }
 
@@ -435,6 +440,9 @@ body {
   max-width: 460px;
   width: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100svh - 40px);
   animation: slideUp 0.3s ease;
 }
 
@@ -486,7 +494,10 @@ body {
 }
 
 .modal-carta-corpo {
-  padding: 16px 20px;
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-secao {
@@ -641,6 +652,9 @@ body {
   padding: 30px;
   text-align: center;
   animation: slideUp 0.3s ease;
+  max-height: calc(100svh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .resultado-emoji { font-size: 64px; margin-bottom: 10px; }
@@ -990,8 +1004,7 @@ body {
       <div class="logo-sub">Ciências Humanas e Sociais</div>
       <div class="intro-box">
         Descubra o curso secreto do seu oponente fazendo perguntas sobre o personagem!<br><br>
-        Ao final da partida, você avalia todos os cursos com estrelas e recebe seu ranking.<br><br>
-        📲 Ao final, envie seu ranking pelo WhatsApp. Depois disso, pode jogar quantas vezes quiser!
+        Ao final da partida, você avalia todos os cursos com estrelas e recebe seu ranking.
         <br><br>⏭️ Prefere não jogar? Use o botão <strong>Ir Direto para Avaliação</strong> abaixo.
       </div>
       <button class="btn-iniciar" onclick="iniciarJogo()">▶ Começar Partida</button>
@@ -1139,6 +1152,7 @@ body {
     <div class="resultado-titulo" id="resultado-titulo"></div>
     <div class="resultado-texto" id="resultado-texto"></div>
     <button class="btn-nova-partida" onclick="iniciarAvaliacaoFinal()">⭐ Avaliar Cursos</button>
+    <button class="btn-sair-jogo" id="btn-sair-jogo" onclick="salvarEContinuar()" style="display:none;background:rgba(255,255,255,0.08);color:#94a3b8;font-weight:600;width:100%;padding:11px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:0.9rem;cursor:pointer;margin-top:8px;">🚪 Não quero mais jogar</button>
   </div>
 </div>
 
@@ -1147,7 +1161,8 @@ body {
     <div class="ranking-titulo">🏆 Seu Ranking Vocacional</div>
     <div class="ranking-subtitulo">Ciências Humanas e Sociais — do maior ao menor interesse</div>
     <div id="ranking-lista"></div>
-    <button class="btn-ranking-wa" id="btn-wa-ranking" onclick="salvarEContinuar()" style="background:#c9a84c;color:#000;font-weight:700">✔ SALVAR E CONTINUAR</button>
+    <button class="btn-ranking-wa" id="btn-jogar-novo" onclick="novaPartidaDoRanking()" style="background:#6366f1;color:#fff;font-weight:700;width:100%;padding:14px;border:none;border-radius:10px;font-size:1rem;cursor:pointer;margin-bottom:10px;">🔄 Jogar Novamente</button>
+    <button class="btn-ranking-wa" id="btn-wa-ranking" onclick="salvarEContinuar()" style="background:rgba(255,255,255,0.08);color:#94a3b8;font-weight:600;width:100%;padding:12px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:0.9rem;cursor:pointer;">🚪 Não quero mais jogar</button>
   </div>
 </div>
 
@@ -2176,6 +2191,8 @@ function mostrarResultado(ganhou, personagem) {
   var btn = document.querySelector('.btn-nova-partida');
   if (btn) btn.textContent = estado.primeiraPartida ? '⭐ Avaliar Cursos' : '🔄 Continuar Jogando';
   if (btn) btn.onclick = estado.primeiraPartida ? iniciarAvaliacaoFinal : novaPartida;
+  var btnSair = document.getElementById('btn-sair-jogo');
+  if (btnSair) btnSair.style.display = estado.primeiraPartida ? 'none' : 'block';
 }
 
 function atualizarContadorMaquina() {
