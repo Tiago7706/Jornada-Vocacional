@@ -224,15 +224,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'quem-fala-isso') {
-    return (
-      <QuemFalaIsso
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/quem-fala-isso.html" onComplete={handleComplete} />
   }
 
   if (experience.slug === 'uma-noite-no-museu') {
