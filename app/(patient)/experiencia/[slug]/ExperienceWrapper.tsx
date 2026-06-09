@@ -243,7 +243,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'inside-exe') {
-    return <IframeGame src="/games/inside-exe.html" onComplete={handleComplete} onSave={handleSilentSave} onExit={handleExit} />
+    return <IframeGame src="/games/inside-exe.html?v=2" onComplete={handleComplete} onSave={handleSilentSave} onExit={handleExit} />
   }
 
   if (experience.slug === 'engenhoso') {
