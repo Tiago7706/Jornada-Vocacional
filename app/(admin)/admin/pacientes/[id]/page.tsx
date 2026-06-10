@@ -2,13 +2,13 @@ import { createClient as createAdmin } from '@supabase/supabase-js'
 import { notFound, redirect } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft, KeyRound, Trophy, Tag, Star } from 'lucide-react'
+import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft, KeyRound } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import ScoresPanel from '@/components/admin/ScoresPanel'
-import { CST_COURSES } from '@/constants/cst-courses'
+import CSTScoreCard from '@/components/admin/CSTScoreCard'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
 
 interface CSTScores {
@@ -237,137 +237,7 @@ export default async function PatientDetailPage({
       </Card>
 
       {/* Resultado Desafio CST */}
-      {cstScores && (
-        <Card className={cstScores.pct >= 80 ? 'border-green-300 bg-green-50' : 'border-amber-200 bg-amber-50'}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              Resultado — Desafio CST
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-
-            {/* Aproveitamento + desconto */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="text-center">
-                <p className="text-3xl font-black">{cstScores.pct}%</p>
-                <p className="text-xs text-muted-foreground">aproveitamento</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">{cstScores.correct}</p>
-                <p className="text-xs text-muted-foreground">acertos</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-red-500">{cstScores.wrong}</p>
-                <p className="text-xs text-muted-foreground">erros</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-orange-500">🔥 {cstScores.maxStreak}</p>
-                <p className="text-xs text-muted-foreground">melhor sequência</p>
-              </div>
-              <div className="ml-auto">
-                {cstScores.pct >= 80 ? (
-                  <div className="flex items-center gap-2 rounded-lg bg-green-600 text-white px-4 py-2 font-bold text-sm shadow">
-                    <Tag className="h-4 w-4" />
-                    DESCONTO 20% CONQUISTADO!
-                  </div>
-                ) : (
-                  <Badge variant="outline" className="text-xs text-muted-foreground">
-                    Não atingiu 80% — sem desconto
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            {/* Todos os cursos — agrupados por área, ordem decrescente, com médias */}
-            {(() => {
-              // Monta lista completa usando ratings + lookup de área por CST_COURSES
-              const areaLookup = new Map(CST_COURSES.map(c => [c.n, c.a]))
-              const ratings = cstScores.ratings as Record<string, number> | undefined
-              if (!ratings || Object.keys(ratings).length === 0) return null
-
-              type CourseItem = { name: string; area: string; stars: number }
-              const courses: CourseItem[] = Object.entries(ratings).map(([name, stars]) => ({
-                name,
-                area: areaLookup.get(name) ?? 'Outras Áreas',
-                stars: Number(stars),
-              }))
-
-              // Agrupa por área
-              const byArea = courses.reduce<Record<string, CourseItem[]>>((acc, c) => {
-                acc[c.area] = acc[c.area] ?? []
-                acc[c.area].push(c)
-                return acc
-              }, {})
-
-              // Ordena cursos dentro de cada área por estrelas desc
-              Object.values(byArea).forEach(list => list.sort((a, b) => b.stars - a.stars))
-
-              // Calcula média por área
-              const areaAvg = (list: CourseItem[]) =>
-                list.reduce((s, c) => s + c.stars, 0) / list.length
-
-              // Ordena áreas pela média desc
-              const areasSorted = Object.keys(byArea).sort(
-                (a, b) => areaAvg(byArea[b]) - areaAvg(byArea[a])
-              )
-
-              // Média geral
-              const totalAvg = courses.reduce((s, c) => s + c.stars, 0) / courses.length
-
-              return (
-                <div className="space-y-4">
-                  {/* Cabeçalho com totais */}
-                  <div className="flex flex-wrap items-center gap-6 py-2 border-b">
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Cursos avaliados</p>
-                      <p className="text-2xl font-bold">{courses.length}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Média geral</p>
-                      <p className="text-2xl font-bold text-amber-500">{totalAvg.toFixed(2)} <span className="text-sm font-normal">/ 5</span></p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Áreas</p>
-                      <p className="text-2xl font-bold">{areasSorted.length}</p>
-                    </div>
-                  </div>
-
-                  {/* Áreas */}
-                  {areasSorted.map(area => {
-                    const list = byArea[area]
-                    const avg = areaAvg(list)
-                    return (
-                      <div key={area}>
-                        {/* Cabeçalho da área */}
-                        <div className="flex items-center justify-between border-b pb-1 mb-1">
-                          <p className="text-xs font-bold text-muted-foreground">{area}</p>
-                          <p className="text-xs font-semibold text-amber-600">
-                            média {avg.toFixed(2)}/5
-                          </p>
-                        </div>
-                        {/* Cursos */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
-                          {list.map((c) => (
-                            <div key={c.name} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
-                              <span className="truncate">{c.name}</span>
-                              <span className="ml-2 shrink-0 text-amber-400 font-mono whitespace-nowrap">
-                                {'★'.repeat(c.stars)}{'☆'.repeat(5 - c.stars)}
-                                <span className="text-muted-foreground ml-1 text-xs">({c.stars}/5)</span>
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            })()}
-
-          </CardContent>
-        </Card>
-      )}
+      {cstScores && <CSTScoreCard scores={cstScores} />}
 
       {/* Gerar relatorio */}
       <Card>
