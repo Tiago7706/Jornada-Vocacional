@@ -2,12 +2,22 @@ import { createClient as createAdmin } from '@supabase/supabase-js'
 import { notFound, redirect } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft, KeyRound } from 'lucide-react'
+import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft, KeyRound, Trophy, Tag, Star } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
+
+interface CSTScores {
+  correct: number
+  wrong: number
+  total: number
+  pct: number
+  maxStreak: number
+  ratings: Record<string, number>
+  topCourses: { name: string; area: string; stars: number }[]
+}
 
 const statusIcon = {
   locked: Lock,
@@ -53,20 +63,23 @@ export default async function PatientDetailPage({
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  const [{ data: patient }, { data: experiences }, { data: progress }] = await Promise.all([
+  const [{ data: patient }, { data: experiences }, { data: progress }, { data: cstScoreRow }] = await Promise.all([
     supabaseAdmin.from('patients').select('*').eq('id', id).single(),
     supabaseAdmin.from('experiences').select('*').order('order_index'),
     supabaseAdmin.from('patient_experiences').select('*').eq('patient_id', id),
+    supabaseAdmin.from('experience_scores').select('scores').eq('patient_id', id).eq('experience_id', 13).maybeSingle(),
   ]) as [
     { data: Patient | null },
     { data: Experience[] | null },
-    { data: PatientExperience[] | null }
+    { data: PatientExperience[] | null },
+    { data: { scores: CSTScores } | null }
   ]
 
   if (!patient) notFound()
 
   const progressMap = new Map(progress?.map(p => [p.experience_id, p]) ?? [])
   const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
+  const cstScores = cstScoreRow?.scores ?? null
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -196,6 +209,72 @@ export default async function PatientDetailPage({
           </div>
         </CardContent>
       </Card>
+
+      {/* Resultado Desafio CST */}
+      {cstScores && (
+        <Card className={cstScores.pct >= 80 ? 'border-green-300 bg-green-50' : 'border-amber-200 bg-amber-50'}>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Trophy className="h-4 w-4" />
+              Resultado — Desafio CST
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+
+            {/* Aproveitamento + desconto */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="text-center">
+                <p className="text-3xl font-black">{cstScores.pct}%</p>
+                <p className="text-xs text-muted-foreground">aproveitamento</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">{cstScores.correct}</p>
+                <p className="text-xs text-muted-foreground">acertos</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-red-500">{cstScores.wrong}</p>
+                <p className="text-xs text-muted-foreground">erros</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-orange-500">🔥 {cstScores.maxStreak}</p>
+                <p className="text-xs text-muted-foreground">melhor sequência</p>
+              </div>
+              <div className="ml-auto">
+                {cstScores.pct >= 80 ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-green-600 text-white px-4 py-2 font-bold text-sm shadow">
+                    <Tag className="h-4 w-4" />
+                    DESCONTO 20% CONQUISTADO!
+                  </div>
+                ) : (
+                  <Badge variant="outline" className="text-xs text-muted-foreground">
+                    Não atingiu 80% — sem desconto
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            {/* Top cursos */}
+            {cstScores.topCourses?.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  ⭐ Top cursos de maior interesse
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  {cstScores.topCourses.map((c, i) => (
+                    <div key={i} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
+                      <span className="font-medium truncate">{i + 1}. {c.name}</span>
+                      <span className="ml-2 shrink-0 text-amber-400">
+                        {'★'.repeat(c.stars)}{'☆'.repeat(5 - c.stars)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </CardContent>
+        </Card>
+      )}
 
       {/* Gerar relatorio */}
       <Card>
