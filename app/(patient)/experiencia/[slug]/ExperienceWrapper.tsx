@@ -262,15 +262,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'desafio-cst-final') {
-    return (
-      <DesafioCSTFinal
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/desafio-cst-final.html?v=1" onComplete={handleComplete} onExit={handleExit} />
   }
 
   // Fallback placeholder for games not yet migrated
