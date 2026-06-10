@@ -16,6 +16,7 @@ interface CSTScores {
   pct: number
   maxStreak: number
   ratings: Record<string, number>
+  allCourses: { name: string; area: string; stars: number }[]
   topCourses: { name: string; area: string; stars: number }[]
 }
 
@@ -253,24 +254,46 @@ export default async function PatientDetailPage({
               </div>
             </div>
 
-            {/* Top cursos */}
-            {cstScores.topCourses?.length > 0 && (
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                  ⭐ Top cursos de maior interesse
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                  {cstScores.topCourses.map((c, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
-                      <span className="font-medium truncate">{i + 1}. {c.name}</span>
-                      <span className="ml-2 shrink-0 text-amber-400">
-                        {'★'.repeat(c.stars)}{'☆'.repeat(5 - c.stars)}
-                      </span>
-                    </div>
-                  ))}
+            {/* Todos os cursos avaliados — agrupados por área */}
+            {(cstScores.allCourses ?? cstScores.topCourses)?.length > 0 && (() => {
+              const courses = cstScores.allCourses ?? cstScores.topCourses
+              // agrupa por área
+              const byArea = courses.reduce<Record<string, typeof courses>>((acc, c) => {
+                acc[c.area] = acc[c.area] ?? []
+                acc[c.area].push(c)
+                return acc
+              }, {})
+              // ordena áreas pelo maior score médio
+              const areasSorted = Object.keys(byArea).sort((a, b) => {
+                const avg = (list: typeof courses) => list.reduce((s, c) => s + c.stars, 0) / list.length
+                return avg(byArea[b]) - avg(byArea[a])
+              })
+              return (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                    📊 Pontuação bruta — todos os {courses.length} cursos avaliados
+                  </p>
+                  <div className="space-y-4">
+                    {areasSorted.map(area => (
+                      <div key={area}>
+                        <p className="text-xs font-bold text-muted-foreground mb-1 border-b pb-1">{area}</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                          {byArea[area].map((c, i) => (
+                            <div key={i} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
+                              <span className="truncate">{c.name}</span>
+                              <span className="ml-2 shrink-0 text-amber-400 font-mono">
+                                {'★'.repeat(c.stars)}{'☆'.repeat(5 - c.stars)}
+                                <span className="text-muted-foreground ml-1 text-xs">({c.stars}/5)</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
           </CardContent>
         </Card>
