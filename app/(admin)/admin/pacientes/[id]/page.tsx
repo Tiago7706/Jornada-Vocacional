@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2, Circle, Lock, PlayCircle, ArrowLeft, KeyRound } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import UnlockControl from './UnlockControl'
+import UnlockControl from '@/components/admin/UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import ScoresPanel from '@/components/admin/ScoresPanel'
 import CSTScoreCard from '@/components/admin/CSTScoreCard'
@@ -84,6 +84,17 @@ export default async function PatientDetailPage({
 
   const progressMap = new Map(progress?.map(p => [p.experience_id, p]) ?? [])
   const expTitleMap = new Map(experiences?.map(e => [e.id, e.title]) ?? [])
+
+  // Experiências do caminho do participante para o UnlockControl
+  const pathExperiences = (experiences ?? [])
+    .filter(e =>
+      e.type === 'universal' ||
+      (patient?.path_type === 'traditional' && e.type === 'traditional') ||
+      (patient?.path_type === 'interactive' && e.type === 'interactive') ||
+      patient?.path_type === null
+    )
+    .sort((a, b) => a.order_index - b.order_index)
+    .map(e => ({ order_index: e.order_index, title: e.title }))
   const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
   const cstScores = cstScoreRow?.scores ?? null
 
@@ -187,7 +198,8 @@ export default async function PatientDetailPage({
           <UnlockControl
             patientId={id}
             currentMax={patient.max_experience_unlocked}
-            totalExperiences={12}
+            pathType={patient.path_type as 'traditional' | 'interactive' | null}
+            experiences={pathExperiences}
           />
         </CardContent>
       </Card>
