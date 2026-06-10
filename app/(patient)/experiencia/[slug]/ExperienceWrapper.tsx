@@ -262,7 +262,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'desafio-cst-final') {
-    return <IframeGame src="/games/desafio-cst-final.html?v=2" onComplete={handleComplete} onExit={handleExit} />
+    return <IframeGame src="/games/desafio-cst-final.html?v=3" onComplete={handleComplete} onExit={handleExit} />
   }
 
   // Fallback placeholder for games not yet migrated
