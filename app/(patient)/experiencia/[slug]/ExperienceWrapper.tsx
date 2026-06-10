@@ -68,7 +68,6 @@ import FaceAFace from '@/components/experiences/FaceAFace'
 import QuemFalaIsso from '@/components/experiences/QuemFalaIsso'
 import UmaNoiteNoMuseu from '@/components/experiences/UmaNoiteNoMuseu'
 import INSIDEexe from '@/components/experiences/INSIDEexe'
-import Engenhoso from '@/components/experiences/Engenhoso'
 
 interface Props {
   experience: Experience
@@ -247,15 +246,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'engenhoso') {
-    return (
-      <Engenhoso
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
+    return <IframeGame src="/games/engenhoso.html?v=4" onComplete={handleComplete} onExit={handleExit} />
   }
 
   if (experience.slug === 'jornada-vocacional' || experience.slug === 'jornada-vocacional-v5') {
