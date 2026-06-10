@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
+import ScoresPanel from '@/components/admin/ScoresPanel'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
 
 interface CSTScores {
@@ -64,23 +65,36 @@ export default async function PatientDetailPage({
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  const [{ data: patient }, { data: experiences }, { data: progress }, { data: cstScoreRow }] = await Promise.all([
+  const [{ data: patient }, { data: experiences }, { data: progress }, { data: cstScoreRow }, { data: allScores }] = await Promise.all([
     supabaseAdmin.from('patients').select('*').eq('id', id).single(),
     supabaseAdmin.from('experiences').select('*').order('order_index'),
     supabaseAdmin.from('patient_experiences').select('*').eq('patient_id', id),
     supabaseAdmin.from('experience_scores').select('scores').eq('patient_id', id).eq('experience_id', 13).maybeSingle(),
+    supabaseAdmin.from('experience_scores').select('experience_id,scores').eq('patient_id', id),
   ]) as [
     { data: Patient | null },
     { data: Experience[] | null },
     { data: PatientExperience[] | null },
-    { data: { scores: CSTScores } | null }
+    { data: { scores: CSTScores } | null },
+    { data: { experience_id: number; scores: Record<string, unknown> }[] | null }
   ]
 
   if (!patient) notFound()
 
   const progressMap = new Map(progress?.map(p => [p.experience_id, p]) ?? [])
+  const expTitleMap = new Map(experiences?.map(e => [e.id, e.title]) ?? [])
   const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
   const cstScores = cstScoreRow?.scores ?? null
+
+  // Monta entradas do ScoresPanel (todos exceto CST que tem card próprio)
+  const scorePanelEntries = (allScores ?? [])
+    .filter(s => s.experience_id !== 13)
+    .sort((a, b) => a.experience_id - b.experience_id)
+    .map(s => ({
+      experience_id: s.experience_id,
+      experience_title: expTitleMap.get(s.experience_id) ?? `Jogo ${s.experience_id}`,
+      scores: s.scores,
+    }))
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -208,6 +222,16 @@ export default async function PatientDetailPage({
               )
             })}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Escores por jogo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Escores por Jogo</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScoresPanel entries={scorePanelEntries} />
         </CardContent>
       </Card>
 
