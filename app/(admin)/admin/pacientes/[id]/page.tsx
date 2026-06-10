@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import UnlockControl from './UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import ScoresPanel from '@/components/admin/ScoresPanel'
+import { CST_COURSES } from '@/constants/cst-courses'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
 
 interface CSTScores {
@@ -278,34 +279,79 @@ export default async function PatientDetailPage({
               </div>
             </div>
 
-            {/* Todos os cursos avaliados — agrupados por área */}
-            {(cstScores.allCourses ?? cstScores.topCourses)?.length > 0 && (() => {
-              const courses = cstScores.allCourses ?? cstScores.topCourses
-              // agrupa por área
-              const byArea = courses.reduce<Record<string, typeof courses>>((acc, c) => {
+            {/* Todos os cursos — agrupados por área, ordem decrescente, com médias */}
+            {(() => {
+              // Monta lista completa usando ratings + lookup de área por CST_COURSES
+              const areaLookup = new Map(CST_COURSES.map(c => [c.n, c.a]))
+              const ratings = cstScores.ratings as Record<string, number> | undefined
+              if (!ratings || Object.keys(ratings).length === 0) return null
+
+              type CourseItem = { name: string; area: string; stars: number }
+              const courses: CourseItem[] = Object.entries(ratings).map(([name, stars]) => ({
+                name,
+                area: areaLookup.get(name) ?? 'Outras Áreas',
+                stars: Number(stars),
+              }))
+
+              // Agrupa por área
+              const byArea = courses.reduce<Record<string, CourseItem[]>>((acc, c) => {
                 acc[c.area] = acc[c.area] ?? []
                 acc[c.area].push(c)
                 return acc
               }, {})
-              // ordena áreas pelo maior score médio
-              const areasSorted = Object.keys(byArea).sort((a, b) => {
-                const avg = (list: typeof courses) => list.reduce((s, c) => s + c.stars, 0) / list.length
-                return avg(byArea[b]) - avg(byArea[a])
-              })
+
+              // Ordena cursos dentro de cada área por estrelas desc
+              Object.values(byArea).forEach(list => list.sort((a, b) => b.stars - a.stars))
+
+              // Calcula média por área
+              const areaAvg = (list: CourseItem[]) =>
+                list.reduce((s, c) => s + c.stars, 0) / list.length
+
+              // Ordena áreas pela média desc
+              const areasSorted = Object.keys(byArea).sort(
+                (a, b) => areaAvg(byArea[b]) - areaAvg(byArea[a])
+              )
+
+              // Média geral
+              const totalAvg = courses.reduce((s, c) => s + c.stars, 0) / courses.length
+
               return (
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-                    📊 Pontuação bruta — todos os {courses.length} cursos avaliados
-                  </p>
-                  <div className="space-y-4">
-                    {areasSorted.map(area => (
+                <div className="space-y-4">
+                  {/* Cabeçalho com totais */}
+                  <div className="flex flex-wrap items-center gap-6 py-2 border-b">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Cursos avaliados</p>
+                      <p className="text-2xl font-bold">{courses.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Média geral</p>
+                      <p className="text-2xl font-bold text-amber-500">{totalAvg.toFixed(2)} <span className="text-sm font-normal">/ 5</span></p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Áreas</p>
+                      <p className="text-2xl font-bold">{areasSorted.length}</p>
+                    </div>
+                  </div>
+
+                  {/* Áreas */}
+                  {areasSorted.map(area => {
+                    const list = byArea[area]
+                    const avg = areaAvg(list)
+                    return (
                       <div key={area}>
-                        <p className="text-xs font-bold text-muted-foreground mb-1 border-b pb-1">{area}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                          {byArea[area].map((c, i) => (
-                            <div key={i} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
+                        {/* Cabeçalho da área */}
+                        <div className="flex items-center justify-between border-b pb-1 mb-1">
+                          <p className="text-xs font-bold text-muted-foreground">{area}</p>
+                          <p className="text-xs font-semibold text-amber-600">
+                            média {avg.toFixed(2)}/5
+                          </p>
+                        </div>
+                        {/* Cursos */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
+                          {list.map((c) => (
+                            <div key={c.name} className="flex items-center justify-between rounded-md bg-white/70 border border-white px-3 py-1.5 text-sm">
                               <span className="truncate">{c.name}</span>
-                              <span className="ml-2 shrink-0 text-amber-400 font-mono">
+                              <span className="ml-2 shrink-0 text-amber-400 font-mono whitespace-nowrap">
                                 {'★'.repeat(c.stars)}{'☆'.repeat(5 - c.stars)}
                                 <span className="text-muted-foreground ml-1 text-xs">({c.stars}/5)</span>
                               </span>
@@ -313,8 +359,8 @@ export default async function PatientDetailPage({
                           ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    )
+                  })}
                 </div>
               )
             })()}
