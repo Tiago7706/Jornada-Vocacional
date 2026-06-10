@@ -132,6 +132,7 @@ export default function CSTScoreCard({ scores }: { scores: CSTScores }) {
               <div key={area}>
                 <div className="flex items-center justify-between border-b pb-1 mb-1">
                   <p className="text-xs font-bold text-muted-foreground">{area}</p>
+                  <p className="text-xs text-muted-foreground">{list.length} curso{list.length !== 1 ? 's' : ''}</p>
                   <p className="text-xs font-semibold text-amber-600">média {avg.toFixed(2)}/5</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5">
