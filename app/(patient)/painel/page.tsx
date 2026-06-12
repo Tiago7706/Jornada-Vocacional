@@ -19,6 +19,12 @@ const experienceIcons: Record<number, React.ElementType> = {
   14: GraduationCap,
 }
 
+const coverImages: Record<number, string> = {
+  13: '/images/cover-cst.webp',
+  0:  '/images/cover-jornada.png',
+  14: '/images/cover-cslb.png',
+}
+
 const statusConfig = {
   locked: { label: 'Bloqueado', icon: Lock, variant: 'secondary' as const, color: 'text-muted-foreground' },
   unlocked: { label: 'Disponivel', icon: Circle, variant: 'outline' as const, color: 'text-blue-500' },
@@ -90,18 +96,42 @@ export default async function PatientPainelPage() {
           const StatusIcon = cfg.icon
           const isAccessible = status === 'unlocked' || status === 'in_progress' || status === 'completed'
 
+          const cover = coverImages[exp.id]
+
           return (
-            <Card key={exp.id} className={!isAccessible ? 'opacity-60' : undefined}>
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between">
-                  <div className={`p-2 rounded-lg bg-muted ${cfg.color}`}>
-                    <Icon className="h-5 w-5" />
+            <Card key={exp.id} className={`overflow-hidden ${!isAccessible ? 'opacity-60' : ''}`}>
+              {cover && (
+                <div className="relative h-36 w-full overflow-hidden">
+                  <img
+                    src={cover}
+                    alt={exp.title}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  {!isAccessible && (
+                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+                      <Lock className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <Badge variant={cfg.variant} className="text-xs">
+                      <StatusIcon className="h-3 w-3 mr-1" />
+                      {cfg.label}
+                    </Badge>
                   </div>
-                  <Badge variant={cfg.variant} className="text-xs">
-                    <StatusIcon className="h-3 w-3 mr-1" />
-                    {cfg.label}
-                  </Badge>
                 </div>
+              )}
+              <CardHeader className="pb-2">
+                {!cover && (
+                  <div className="flex items-start justify-between">
+                    <div className={`p-2 rounded-lg bg-muted ${cfg.color}`}>
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <Badge variant={cfg.variant} className="text-xs">
+                      <StatusIcon className="h-3 w-3 mr-1" />
+                      {cfg.label}
+                    </Badge>
+                  </div>
+                )}
                 <CardTitle className="text-base mt-3">{exp.title}</CardTitle>
                 <CardDescription className="text-xs line-clamp-2">{exp.description}</CardDescription>
               </CardHeader>
