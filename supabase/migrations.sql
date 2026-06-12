@@ -127,7 +127,8 @@ INSERT INTO experiences (id, slug, title, description, type, order_index) VALUES
   (10, 'uma-noite-no-museu',        'Uma Noite no Museu',          'Match obra-curso + rating (Artes & Design)',               'interactive', 10),
   (11, 'inside-exe',                'INSIDE.exe',                  'Plataformer 2D (Ciências Exatas)',                         'interactive', 11),
   (12, 'engenhoso',                 'Engenhoso',                   'Plataformer 2D (Engenharias)',                             'interactive', 12),
-  (13, 'desafio-cst-final',         'Desafio CST Final',           'Quiz 153 cursos com timer e estrelas',                    'universal',   13)
+  (13, 'desafio-cst-final',         'Desafio CST Final',           'Quiz 153 cursos com timer e estrelas',                    'universal',   13),
+  (14, 'avaliacao-cslb',            'Avaliação CSLB',               'Avaliação de interesse em 149 cursos de Licenciatura e Bacharelado (escala 1-10)', 'traditional', 14)
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================

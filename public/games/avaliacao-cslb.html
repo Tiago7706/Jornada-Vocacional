@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliação CSLB — Cursos de Licenciatura e Bacharelado</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e17;
+  --surface: #1a1830;
+  --surface2: #232140;
+  --accent: #e8b86d;
+  --text: #fffffe;
+  --text-muted: #a7a9be;
+  --border: rgba(255,255,255,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(124,106,247,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(232,184,109,0.10) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+/* ===== START ===== */
+#screen-start {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:2rem; position:relative; z-index:1;
+}
+.start-inner { max-width:680px; width:100%; text-align:center; }
+.start-badge {
+  display:inline-block; background:rgba(232,184,109,0.15); color:#e8b86d;
+  border:1px solid rgba(232,184,109,0.3); border-radius:99px;
+  padding:.35rem 1.1rem; font-size:.8rem; font-weight:700; letter-spacing:.12em;
+  margin-bottom:1.2rem;
+}
+.start-inner h1 {
+  font-family:'Playfair Display', serif; font-size:clamp(1.5rem,4vw,2.2rem);
+  line-height:1.25; margin-bottom:1.4rem; color:var(--text);
+}
+.tipo-cards { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin-bottom:1.4rem; }
+.tipo-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:1rem 1.1rem; text-align:left;
+}
+.tipo-card strong { display:block; font-size:.9rem; color:var(--accent); margin-bottom:.4rem; }
+.tipo-card p { font-size:.82rem; color:var(--text-muted); line-height:1.5; }
+.start-instr {
+  font-size:.9rem; color:var(--text-muted); margin-bottom:1.6rem; line-height:1.6;
+}
+.start-instr strong { color:var(--text); }
+.btn-start {
+  width:100%; padding:1rem; background:var(--accent); color:#0f0e17;
+  border:none; border-radius:12px; font-size:1rem; font-weight:700; font-family:inherit;
+  cursor:pointer; letter-spacing:.05em; transition:opacity .2s, transform .1s;
+}
+.btn-start:hover { opacity:.9; }
+.btn-start:active { transform:scale(.98); }
+
+/* ===== QUIZ ===== */
+#screen-quiz {
+  display:none; flex-direction:column; min-height:100vh;
+  padding:1rem; position:relative; z-index:1; max-width:720px; margin:0 auto;
+}
+.quiz-header { padding:.5rem 0 .8rem; }
+.area-badge {
+  display:inline-block; border:1px solid; border-radius:99px;
+  padding:.3rem 1rem; font-size:.75rem; font-weight:700; letter-spacing:.08em;
+  margin-bottom:.6rem; transition:color .3s, background-color .3s;
+}
+.progress-wrap { display:flex; align-items:center; gap:.8rem; }
+.progress-info { font-size:.82rem; color:var(--text-muted); white-space:nowrap; min-width:60px; }
+.progress-info span { color:var(--text); font-weight:700; }
+.progress-bar-bg {
+  flex:1; height:5px; background:var(--surface2); border-radius:99px; overflow:hidden;
+}
+.progress-bar-fill {
+  height:100%; border-radius:99px; transition:width .4s ease, background-color .3s;
+  background:var(--accent); width:0%;
+}
+
+.card-wrap { flex:1; display:flex; align-items:center; padding:.5rem 0; }
+.course-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:16px;
+  padding:1.6rem 1.8rem; width:100%;
+}
+.course-card h2 {
+  font-family:'Playfair Display', serif; font-size:clamp(1.3rem,3vw,1.8rem);
+  color:var(--text); margin-bottom:.9rem; line-height:1.3;
+}
+.course-card p {
+  font-size:.88rem; color:var(--text-muted); line-height:1.65;
+  margin-bottom:1.4rem; max-height:200px; overflow-y:auto;
+  text-align:justify;
+}
+.course-card p::-webkit-scrollbar { width:4px; }
+.course-card p::-webkit-scrollbar-track { background:transparent; }
+.course-card p::-webkit-scrollbar-thumb { background:var(--border); border-radius:99px; }
+
+.rating-section {
+  border-top:1px solid var(--border); padding-top:1.2rem;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+}
+.rating-label {
+  font-size:.82rem; color:var(--text-muted); margin-bottom:.8rem; font-weight:600;
+  text-transform:uppercase; letter-spacing:.08em;
+}
+.star-buttons { display:flex; gap:.7rem; justify-content:center; }
+.star-btn {
+  background:none; border:none; font-size:2.4rem; cursor:pointer;
+  color:#3a3858; transition:color .15s, transform .12s; padding:.1rem;
+  line-height:1;
+}
+.star-btn:hover { transform:scale(1.18); }
+.star-btn.on { color:var(--accent); }
+.rating-legend {
+  display:flex; justify-content:space-between; width:100%; max-width:280px;
+  font-size:.72rem; color:var(--text-muted); margin-top:.5rem;
+}
+
+
+.shortcuts-hint {
+  text-align:center; font-size:.72rem; color:var(--text-muted);
+  padding-bottom:.5rem; opacity:.6;
+}
+.shortcuts-hint kbd {
+  background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+  padding:.1rem .35rem; font-family:inherit; font-size:.68rem;
+}
+
+/* ===== RESULTS ===== */
+#screen-results {
+  display:none; padding:1.5rem; max-width:600px; margin:0 auto;
+  position:relative; z-index:1;
+}
+.results-header { text-align:center; margin-bottom:1.6rem; padding-top:1rem; }
+.results-header h1 {
+  font-family:'Playfair Display', serif; font-size:clamp(1.4rem,4vw,2rem);
+  color:var(--accent); margin-bottom:.4rem;
+}
+.results-header p { color:var(--text-muted); font-size:.88rem; }
+
+.ranking-wrap { width:100%; margin-bottom:1.5rem; }
+.ranking-title {
+  font-size:.75rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:.9rem;
+}
+.ranking-item {
+  display:flex; align-items:center; gap:.75rem;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:.65rem .9rem; margin-bottom:.45rem;
+}
+.ranking-item.top1 { border-color:#ffd700; }
+.ranking-item.top2 { border-color:#c0c0c0; }
+.ranking-item.top3 { border-color:#cd7f32; }
+.ranking-pos {
+  font-family:'Playfair Display',serif; font-size:1rem; font-weight:700;
+  color:var(--text-muted); min-width:28px; text-align:center; flex-shrink:0;
+}
+.ranking-medal { font-size:1.2rem; min-width:24px; text-align:center; flex-shrink:0; }
+.ranking-info { flex:1; min-width:0; }
+.ranking-name {
+  font-size:.88rem; font-weight:700; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.ranking-area { font-size:.72rem; color:var(--text-muted); margin-top:.1rem; }
+.ranking-stars { display:flex; align-items:center; gap:.1rem; flex-shrink:0; }
+.ranking-star { font-size:.9rem; color:#3a3858; }
+.ranking-star.on { color:var(--accent); }
+.ranking-score { font-size:.75rem; color:var(--text-muted); margin-left:.3rem; }
+
+.btn-salvar {
+  width:100%; padding:1.1rem; background:var(--accent); color:#0f0e17;
+  border:none; border-radius:12px; font-size:1.05rem; font-weight:700;
+  font-family:inherit; cursor:pointer; margin-top:.5rem;
+  letter-spacing:.05em; transition:opacity .2s;
+}
+.btn-salvar:hover { opacity:.9; }
+
+@media(max-width:500px) {
+  .tipo-cards { grid-template-columns:1fr; }
+  .star-btn { font-size:1.9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== START ===== -->
+<div id="screen-start">
+  <div class="start-inner">
+    <div class="start-badge">🎓 CSLB · 149 CURSOS · 8 ÁREAS</div>
+    <h1>Avaliação dos Cursos Superiores de Licenciatura e Bacharelado</h1>
+    <div class="tipo-cards">
+      <div class="tipo-card">
+        <strong>📚 Bacharelado</strong>
+        <p>Forma profissionais com visão ampla da área de atuação. Duração média de 3 a 6 anos, com foco em gestão, pesquisa e desenvolvimento.</p>
+      </div>
+      <div class="tipo-card">
+        <strong>🏫 Licenciatura</strong>
+        <p>Forma professores para a educação básica. Inclui disciplinas pedagógicas e práticas de ensino. Duração média de 3 a 4 anos.</p>
+      </div>
+    </div>
+    <p class="start-instr">Avalie cada curso de <strong>1 a 5 estrelas</strong> conforme seu nível de interesse — <strong>★</strong> = nada interessante · <strong>★★★★★</strong> = totalmente interessante.</p>
+    <button class="btn-start" onclick="iniciarAvaliacao()">COMEÇAR AVALIAÇÃO →</button>
+    <button class="btn-start" id="btn-resume" onclick="resumeGame()" style="display:none;background:linear-gradient(135deg,#3dcb87,#38bdf8);margin-top:.75rem;font-size:1rem;">↩ Retomar de onde parei</button>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="screen-quiz">
+  <div class="quiz-header">
+    <div id="area-badge" class="area-badge">Área</div>
+    <div class="progress-wrap">
+      <div class="progress-info"><span id="prog-cur">1</span> / <span id="prog-tot">149</span></div>
+      <div class="progress-bar-bg"><div id="prog-bar" class="progress-bar-fill"></div></div>
+    </div>
+  </div>
+  <div class="card-wrap">
+    <div class="course-card">
+      <h2 id="course-name"></h2>
+      <p id="course-desc"></p>
+      <div class="rating-section">
+        <p class="rating-label">Seu nível de interesse</p>
+        <div class="star-buttons" id="rating-btns"></div>
+        <div class="rating-legend"><span>Nada interessante</span><span>Totalmente interessante</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="shortcuts-hint">💡 Dica: teclas <kbd>1</kbd>–<kbd>5</kbd> também avaliam e avançam</div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div id="screen-results">
+  <div class="results-header">
+    <h1>🎓 Avaliação Concluída!</h1>
+    <p id="results-summary"></p>
+  </div>
+  <div class="ranking-wrap">
+    <div class="ranking-title">🏅 Ranking de Interesse pelos Cursos</div>
+    <div id="ranking-list"></div>
+  </div>
+  <button class="btn-salvar" onclick="salvarJogo()">✔ SALVAR JOGO</button>
+</div>
+
+<script>
+const AREAS = [
+  { name:'Administração, Negócios e Serviços', color:'#e8b86d', icon:'💼' },
+  { name:'Ciências Biológicas e da Terra',     color:'#7c6af7', icon:'🌱' },
+  { name:'Saúde e Bem-Estar',                  color:'#3dcb87', icon:'🏥' },
+  { name:'Ciências Humanas e Sociais',         color:'#ff5470', icon:'🌍' },
+  { name:'Comunicação e Informação',           color:'#38bdf8', icon:'📡' },
+  { name:'Artes e Design',                     color:'#f472b6', icon:'🎨' },
+  { name:'Ciências Exatas e Informática',      color:'#fb923c', icon:'🔬' },
+  { name:'Engenharias e Produção',             color:'#a3e635', icon:'⚙️' },
+];
+
+const COURSES = [
+// ── ÁREA 1: Administração, Negócios e Serviços ──────────────────────────────
+{name:'Administração',area:0,desc:'O Bacharelado em Administração forma profissionais capacitados para atuar na gestão de empresas e organizações. Os alunos estudam finanças, marketing, recursos humanos, estratégia, economia, contabilidade e direito, desenvolvendo habilidades analíticas e práticas para tomar decisões eficientes em ambientes corporativos. O objetivo é preparar o aluno para gerenciar recursos, liderar equipes e planejar operações, tanto em empresas privadas quanto no setor público ou terceiro setor. O curso dura de 4 a 5 anos e oferece uma sólida base teórica, além de oportunidades para estágios e atividades práticas.'},
+{name:'Administração Pública',area:0,desc:'O Bacharelado em Administração Pública forma profissionais para atuar na gestão de recursos, políticas públicas e serviços governamentais. O curso aborda administração pública, direito, economia, gestão de projetos, finanças públicas, ética e políticas sociais. O objetivo é capacitar os alunos a entender e aplicar os princípios administrativos no setor público, visando à eficiência, transparência e bem-estar social. A duração é geralmente de 4 a 5 anos.'},
+{name:'Agronegócios e Agropecuária',area:0,desc:'O Bacharelado em Agronegócios e Agropecuária forma profissionais para atuar na gestão e administração de empresas do setor agrícola e pecuário. O curso abrange economia rural, gestão de empresas agrícolas, logística, marketing, finanças, sustentabilidade e tecnologias aplicadas ao campo. O objetivo é preparar os alunos para lidar com os desafios econômicos e estratégicos do agronegócio, fomentando o desenvolvimento do setor de forma eficiente e sustentável. Duração média de 4 a 5 anos.'},
+{name:'Ciências Aeronáuticas',area:0,desc:'O Bacharelado em Ciências Aeronáuticas prepara profissionais para atuar na área da aviação, com foco na gestão e operação de atividades aeronáuticas. O curso aborda física, meteorologia, navegação aérea, sistemas aeronáuticos, segurança de voo, legislação aeronáutica, gestão de aeroportos e companhias aéreas. O objetivo é formar profissionais para atuar como pilotos, engenheiros de voo, gestores de aeroportos ou em funções administrativas do setor. Duração de 3 a 4 anos.'},
+{name:'Ciências Atuariais',area:0,desc:'O Bacharelado em Ciências Atuariais forma profissionais especializados em matemática, estatística e finanças, com foco na análise de riscos e precificação de seguros, previdência e investimentos. O curso aborda cálculo atuarial, probabilidade, matemática financeira, estatísticas, análise de riscos, seguros e economia. O objetivo é preparar o aluno para modelagem de cenários financeiros e atuariais, ajudando empresas a tomar decisões em seguros, pensões e produtos financeiros. Duração de 4 a 5 anos.'},
+{name:'Ciências Contábeis',area:0,desc:'O Bacharelado em Ciências Contábeis forma profissionais capacitados para atuar na área de contabilidade, tanto no setor público quanto privado. O curso aborda contabilidade financeira, fiscal, gerencial, auditoria, tributos, controladoria, direito empresarial e análise de demonstrações contábeis. O objetivo é preparar o aluno para registrar, analisar e interpretar informações financeiras, além de realizar auditorias e assessorar empresas na gestão fiscal e tributária. Duração de 4 a 5 anos.'},
+{name:'Ciências Econômicas',area:0,desc:'O Bacharelado em Ciências Econômicas forma profissionais capacitados para analisar, entender e intervir nas dinâmicas econômicas de empresas, governos e sociedades. O curso abrange microeconomia, macroeconomia, econometria, finanças, políticas públicas, economia internacional, teoria econômica e análise de mercados. O objetivo é preparar os alunos para interpretar dados econômicos, desenvolver modelos de previsão e apoiar a tomada de decisões no setor público, privado ou acadêmico. Duração de 4 a 5 anos.'},
+{name:'Comércio Exterior',area:0,desc:'O Bacharelado em Comércio Exterior forma profissionais para atuar na negociação, gestão e operação de atividades comerciais internacionais. O curso aborda economia internacional, logística, câmbio, direito internacional, marketing global, gestão de contratos, comércio eletrônico e estratégia empresarial. O objetivo é capacitar os alunos para lidar com importação e exportação, regulamentações aduaneiras e inserção de empresas no mercado global. Duração de 4 a 5 anos.'},
+{name:'Defesa e Gestão Estratégica Internacional',area:0,desc:'O Bacharelado em Defesa e Gestão Estratégica Internacional forma profissionais para atuar na análise, planejamento e implementação de estratégias de defesa e segurança, com foco no contexto internacional. O curso aborda geopolítica, segurança internacional, diplomacia, direito internacional, inteligência, estratégias militares, gestão de crises e relações exteriores. O objetivo é capacitar os alunos a entender e agir nas dinâmicas de defesa, segurança e políticas externas entre países. Duração de 4 a 5 anos.'},
+{name:'Gastronomia',area:0,desc:'O Bacharelado em Gastronomia forma profissionais capacitados para atuar na criação, preparação e gestão de alimentos e bebidas em restaurantes, hotéis, indústrias alimentícias e eventos. O curso aborda técnicas culinárias, nutrição, segurança alimentar, gestão de serviços de alimentação, empreendedorismo, marketing gastronômico e sustentabilidade. O objetivo é preparar alunos para se tornarem chefs, gestores de cozinhas e empreendedores no setor alimentício. Duração de 3 a 4 anos.'},
+{name:'Hotelaria',area:0,desc:'O Bacharelado em Hotelaria forma profissionais para atuar na gestão e operação de hotéis, pousadas, resorts e outros empreendimentos de hospitalidade. O curso abrange administração hoteleira, gestão de serviços, marketing turístico, recursos humanos, finanças, planejamento estratégico e sustentabilidade. O objetivo é capacitar os alunos para gerenciar operações, otimizar recursos e proporcionar experiências de qualidade aos hóspedes. Duração de 3 a 4 anos.'},
+{name:'Logística',area:0,desc:'O Bacharelado em Logística forma profissionais para gerenciar e otimizar processos de transporte, armazenamento e distribuição de produtos. O curso aborda gestão de cadeias de suprimentos, transporte, armazenagem, gestão de estoques, planejamento logístico, infraestrutura, comércio exterior e tecnologia aplicada à logística. O objetivo é capacitar os alunos para planejar, coordenar e executar operações logísticas eficientes, reduzindo custos e melhorando o desempenho das organizações. Duração de 3 a 4 anos.'},
+{name:'Marketing',area:0,desc:'O Bacharelado em Marketing forma profissionais para planejar, executar e gerenciar estratégias de marketing em empresas de diferentes setores. O curso aborda comportamento do consumidor, pesquisa de mercado, branding, comunicação, publicidade, gestão de produtos, marketing digital, estratégias de vendas e análise de dados. O objetivo é capacitar os alunos a desenvolver campanhas eficazes e aumentar a competitividade das organizações no mercado. Duração de 3 a 4 anos.'},
+{name:'Segurança Pública',area:0,desc:'O Bacharelado em Segurança Pública forma profissionais preparados para atuar na prevenção e gestão da segurança em diferentes contextos. O curso aborda direito penal, criminologia, políticas públicas de segurança, administração pública, gestão de risco, ética e técnicas de investigação. O objetivo é capacitar os alunos para atuar em instituições de segurança pública e desenvolver soluções eficazes para a segurança da sociedade. Duração de 3 a 4 anos.'},
+{name:'Turismo',area:0,desc:'O Bacharelado em Turismo forma profissionais para planejar, organizar e gerenciar atividades turísticas em agências de viagens, operadoras, eventos e receptivos. O curso aborda gestão de destinos turísticos, planejamento de viagens, marketing turístico, hospitalidade, ecoturismo, políticas públicas e sustentabilidade. O objetivo é capacitar os alunos para promover o turismo e desenvolver estratégias para a valorização de destinos, produtos e serviços turísticos. Duração de 3 a 4 anos.'},
+
+// ── ÁREA 2: Ciências Biológicas e da Terra ───────────────────────────────────
+{name:'Agroecologia',area:1,desc:'O Bacharelado em Agroecologia forma profissionais para atuar na produção agrícola sustentável, integrando práticas ecológicas, sociais e econômicas no campo. O curso aborda ecologia, solos, manejo sustentável, agroindústria, políticas públicas agrícolas, biodiversidade, técnicas de cultivo orgânico e sistemas agroflorestais. O objetivo é capacitar os alunos para promover a produção de alimentos de forma ambientalmente responsável, respeitando os princípios ecológicos e a saúde do solo. Duração de 4 a 5 anos.'},
+{name:'Agronomia',area:1,desc:'O Bacharelado em Agronomia forma profissionais para atuar na produção agrícola, com foco no uso sustentável dos recursos naturais e no aumento da produtividade no campo. O curso aborda solos, sementes, manejo de culturas, irrigação, fitopatologia, genética, agricultura de precisão, gestão rural e sustentabilidade. O objetivo é capacitar os alunos para planejar, implementar e gerenciar práticas agrícolas eficientes e responsáveis. Duração de 5 anos.'},
+{name:'Biotecnologia e Bioquímica',area:1,desc:'O Bacharelado em Biotecnologia e Bioquímica forma profissionais com conhecimentos em biotecnologia, bioquímica e ciências biomédicas, capacitando-os para trabalhar no desenvolvimento de tecnologias voltadas à saúde, agricultura, indústria e meio ambiente. O curso aborda biologia molecular, genética, microbiologia, processos biotecnológicos, química orgânica, bioinformática e engenharia genética. O objetivo é preparar os alunos para inovar na criação de produtos e processos biotecnológicos, além de realizar pesquisas científicas. Duração de 4 a 5 anos.'},
+{name:'Ciências e Tecnologia de Alimentos',area:1,desc:'O Bacharelado em Ciências e Tecnologia de Alimentos forma profissionais capacitados para o desenvolvimento, produção e controle da qualidade de alimentos. O curso aborda microbiologia de alimentos, química dos alimentos, processamento, controle de qualidade, engenharia de alimentos, segurança alimentar e inovação tecnológica. O objetivo é preparar os alunos para melhorar processos de produção, conservação e distribuição de alimentos, além de promover saúde pública e sustentabilidade no setor. Duração de 4 a 5 anos.'},
+{name:'Licenciatura em Ciências Agrárias',area:1,desc:'A Licenciatura em Ciências Agrárias forma professores para atuar no ensino de ciências relacionadas à agricultura, meio ambiente e sustentabilidade. O curso abrange agronomia, ecologia, biologia, manejo de solo, técnicas agrícolas, educação ambiental e didática. O objetivo é capacitar os alunos para lecionar e disseminar conhecimentos sobre práticas agrícolas, promovendo a conscientização sobre agricultura sustentável e uso responsável dos recursos naturais. Duração de 3 a 4 anos.'},
+{name:'Ciências Biológicas',area:1,desc:'O Bacharelado em Ciências Biológicas forma profissionais para atuar em pesquisa, conservação e gestão de recursos naturais, com foco no estudo dos seres vivos e seus ambientes — biologia molecular, ecologia, genética, zoologia, botânica, microbiologia e fisiologia. A Licenciatura em Ciências Biológicas prepara professores de biologia para o ensino fundamental e médio, incluindo disciplinas pedagógicas como didática e psicologia educacional. Ambos têm duração média de 3 a 4 anos.'},
+{name:'Licenciatura em Ciências Naturais e Exatas',area:1,desc:'A Licenciatura em Ciências Naturais e Exatas forma professores para atuar no ensino fundamental e médio nas áreas de ciências naturais, matemática e física. O curso aborda biologia, física, química, matemática, ecologia, astronomia e educação científica, além de disciplinas pedagógicas como didática e psicologia da educação. O objetivo é capacitar os alunos para ensinar de forma dinâmica, estimulando o interesse pela ciência e o pensamento crítico dos estudantes. Duração de 3 a 4 anos.'},
+{name:'Ecologia',area:1,desc:'O Bacharelado em Ecologia forma profissionais para estudar as interações entre os seres vivos e o ambiente, com foco na preservação e manejo dos ecossistemas. O curso aborda biologia, evolução, genética, ecossistemas, biodiversidade, comportamento animal, técnicas de pesquisa e impacto ambiental. O objetivo é capacitar os alunos a analisar, monitorar e propor soluções para questões ambientais, como conservação de espécies e recuperação de áreas degradadas. Duração de 4 a 5 anos.'},
+{name:'Geofísica',area:1,desc:'O Bacharelado em Geofísica forma profissionais para estudar a Terra e seus processos físicos, utilizando métodos e tecnologias para analisar fenômenos como terremotos, campos magnéticos e propriedades geológicas. O curso aborda física, matemática, geologia, sismologia, geodinâmica, geotermia, geofísica aplicada e sensoriamento remoto. O objetivo é capacitar os alunos a explorar recursos naturais, estudar riscos naturais e monitorar mudanças ambientais. Duração de 4 a 5 anos.'},
+{name:'Geologia',area:1,desc:'O Bacharelado em Geologia forma profissionais para estudar a composição, estrutura e evolução da Terra e os processos naturais que a moldam. O curso aborda mineralogia, petrologia, geofísica, geodinâmica, paleontologia, hidrogeologia, análise de solo e geomorfologia. O objetivo é capacitar os alunos a investigar fenômenos geológicos, explorar recursos naturais e contribuir para a preservação ambiental. Duração de 4 a 5 anos.'},
+{name:'Gestão Ambiental',area:1,desc:'O Bacharelado em Gestão Ambiental forma profissionais para administrar recursos naturais e desenvolver estratégias para a preservação e recuperação do meio ambiente. O curso aborda ecologia, direito ambiental, sustentabilidade, gestão de resíduos, políticas públicas ambientais, impacto ambiental e educação ambiental. O objetivo é capacitar os alunos a planejar, implementar e monitorar ações voltadas à conservação ambiental, conciliando desenvolvimento econômico com preservação dos ecossistemas. Duração de 3 a 4 anos.'},
+{name:'Medicina Veterinária',area:1,desc:'O Bacharelado em Medicina Veterinária forma profissionais capacitados para cuidar da saúde animal, diagnosticar e tratar doenças em animais, além de atuar na prevenção de epidemias e no controle de zoonoses. O curso abrange anatomia, fisiologia, microbiologia, patologia, farmacologia, clínica veterinária, cirurgia, nutrição animal e legislação. O objetivo é preparar os alunos para trabalhar em consultórios, hospitais veterinários, clínicas de animais silvestres e programas de saúde pública. Duração de 5 a 6 anos.'},
+{name:'Meteorologia',area:1,desc:'O Bacharelado em Meteorologia forma profissionais para estudar e analisar fenômenos atmosféricos e climáticos, com foco na previsão do tempo e no impacto de condições climáticas. O curso aborda física atmosférica, climatologia, dinâmica dos fluidos, modelagem numérica, meteorologia de superfície e técnicas de previsão. O objetivo é capacitar os alunos para trabalhar em órgãos governamentais, empresas e centros de pesquisa, realizando previsões e estudos climáticos. Duração de 4 a 5 anos.'},
+{name:'Oceanografia',area:1,desc:'O Bacharelado em Oceanografia forma profissionais para estudar os oceanos — suas características físicas, químicas, biológicas e geológicas — e suas interações com o clima e o meio ambiente. O curso aborda geologia marinha, física dos oceanos, biologia marinha, química ambiental, sensoriamento remoto e gestão de recursos marinhos. O objetivo é capacitar os alunos a realizar pesquisas científicas, monitorar ecossistemas marinhos e colaborar na gestão sustentável dos recursos oceânicos. Duração de 4 a 5 anos.'},
+{name:'Produção de Bebidas',area:1,desc:'O Bacharelado em Produção de Bebidas forma profissionais para atuar na fabricação e gestão da produção de bebidas como sucos, refrigerantes, cervejas, vinhos e destilados. O curso abrange microbiologia de alimentos, tecnologia de fermentação, química dos alimentos, processos de produção, controle de qualidade e regulamentação sanitária. O objetivo é capacitar os alunos a desenvolver, produzir e gerenciar processos produtivos eficientes e seguros. Duração de 3 a 4 anos.'},
+{name:'Zootecnia',area:1,desc:'O Bacharelado em Zootecnia forma profissionais para gerenciar a produção e saúde de animais destinados à alimentação, vestuário e outros produtos de origem animal. O curso abrange nutrição animal, genética, melhoramento genético, manejo de rebanhos, sanidade animal, biotecnologia e manejo de pastagens. O objetivo é capacitar os alunos a otimizar a produção animal de forma eficiente e sustentável, com foco no aumento da produtividade e bem-estar dos animais. Duração de 4 a 5 anos.'},
+
+// ── ÁREA 3: Saúde e Bem-Estar ────────────────────────────────────────────────
+{name:'Biomedicina',area:2,desc:'O Bacharelado em Biomedicina forma profissionais capacitados para atuar na área da saúde com foco em diagnóstico laboratorial, pesquisa biomédica e desenvolvimento de tecnologias para prevenção e tratamento de doenças. O curso aborda microbiologia, parasitologia, bioquímica, imunologia, genética, análises clínicas, citologia e biologia molecular. O objetivo é preparar os alunos para realizar exames laboratoriais, desenvolver pesquisas científicas e colaborar com equipes de saúde. Duração de 4 a 5 anos.'},
+{name:'Educação Física',area:2,desc:'O Bacharelado em Educação Física forma profissionais para atuar na promoção da saúde, bem-estar e desempenho físico em academias, clubes, reabilitação e treinamento esportivo — abrangendo fisiologia do exercício, biomecânica, nutrição esportiva e gestão esportiva. A Licenciatura prepara professores de educação física para o ensino fundamental e médio, incluindo didática e psicologia educacional. Ambos têm duração de aproximadamente 4 anos.'},
+{name:'Enfermagem',area:2,desc:'O Bacharelado em Enfermagem forma profissionais para atuar no cuidado à saúde de indivíduos, famílias e comunidades, abordando anatomia, fisiologia, farmacologia, saúde pública, enfermagem clínica, cuidados intensivos e gestão em saúde. A Licenciatura em Enfermagem prepara professores para escolas técnicas de saúde e ensino superior, incluindo didática e psicologia educacional. Ambos têm duração de 4 a 5 anos.'},
+{name:'Esporte',area:2,desc:'O Bacharelado em Esporte forma profissionais capacitados para atuar no treinamento, gestão e promoção de atividades esportivas em diversas modalidades. O curso abrange fisiologia do exercício, biomecânica, treinamento esportivo, psicologia do esporte, gestão esportiva, nutrição e metodologia do treinamento. O objetivo é preparar os alunos para planejar e conduzir treinos, melhorar o desempenho de atletas e gerir eventos e organizações esportivas. Duração de 4 anos.'},
+{name:'Estética e Cosmética',area:2,desc:'O Bacharelado em Estética e Cosmética forma profissionais especializados em cuidados com a beleza, bem-estar e saúde da pele. O curso aborda anatomia, dermatologia, cosmetologia, técnicas de massagem, tratamentos faciais e corporais, maquiagem, spa e empreendedorismo na área de beleza. O objetivo é capacitar os alunos para realizar procedimentos estéticos, desenvolver produtos cosméticos e gerenciar negócios no setor de beleza. Duração de 3 a 4 anos.'},
+{name:'Farmácia',area:2,desc:'O Bacharelado em Farmácia forma profissionais capacitados para atuar na pesquisa, produção, controle de qualidade e dispensação de medicamentos, promovendo o uso seguro de substâncias terapêuticas. O curso aborda química, farmacologia, bioquímica, toxicologia, microbiologia, tecnologia farmacêutica e atenção farmacêutica. O objetivo é preparar os alunos para trabalhar em farmácias, laboratórios, indústrias farmacêuticas, hospitais e pesquisa de novos medicamentos. Duração de 5 anos.'},
+{name:'Fisioterapia',area:2,desc:'O Bacharelado em Fisioterapia forma profissionais capacitados para prevenir, diagnosticar e tratar disfunções do movimento e promover a reabilitação física de pacientes. O curso abrange anatomia, fisiologia, cinesiologia, biomecânica, fisioterapia neurológica, ortopédica e respiratória, além de técnicas de reabilitação e terapia manual. O objetivo é preparar os alunos para atuar em hospitais, clínicas, centros de reabilitação e atendimento domiciliar. Duração de 4 a 5 anos.'},
+{name:'Fonoaudiologia',area:2,desc:'O Bacharelado em Fonoaudiologia forma profissionais para diagnosticar, tratar e prevenir distúrbios da comunicação humana, como problemas de fala, audição, linguagem e deglutição. O curso aborda anatomia, fisiologia, linguística, audiologia, neurologia, fonética, terapia vocal e motricidade orofacial. O objetivo é capacitar os alunos a desenvolver terapias para melhorar a comunicação e a qualidade de vida de pessoas com dificuldades auditivas, vocais ou de fala. Duração de 4 a 5 anos.'},
+{name:'Gerontologia',area:2,desc:'O Bacharelado em Gerontologia forma profissionais especializados no estudo do envelhecimento e no cuidado com a população idosa, abordando aspectos biológicos, psicológicos e sociais do envelhecimento. O curso abrange geriatria, saúde pública, psicologia do envelhecimento, políticas sociais, gestão de serviços de saúde, cuidados paliativos e promoção da qualidade de vida para idosos. O objetivo é capacitar os alunos para trabalhar em instituições de saúde, residenciais para idosos e ONGs. Duração de 4 anos.'},
+{name:'Gestão de Saúde',area:2,desc:'O Bacharelado em Gestão de Saúde forma profissionais capacitados para administrar e coordenar serviços e sistemas de saúde, visando melhorar a qualidade e eficiência no atendimento. O curso aborda administração hospitalar, políticas públicas de saúde, economia da saúde, planejamento estratégico, gestão de recursos humanos, vigilância sanitária e avaliação de serviços. O objetivo é preparar os alunos para gerenciar hospitais, clínicas e laboratórios, além de planejar políticas de saúde pública. Duração de 4 anos.'},
+{name:'Medicina',area:2,desc:'O Bacharelado em Medicina forma médicos capacitados para diagnosticar, tratar e prevenir doenças, além de promover a saúde e o bem-estar da população. O curso abrange anatomia, fisiologia, farmacologia, patologia, clínica médica, cirurgia, pediatria, ginecologia, saúde pública e práticas de emergência. O objetivo é preparar os alunos para atuar em hospitais, clínicas e na pesquisa científica, atendendo pacientes e promovendo a saúde. Duração de 6 anos.'},
+{name:'Musicoterapia',area:2,desc:'O Bacharelado em Musicoterapia forma profissionais capacitados para utilizar a música como ferramenta terapêutica no tratamento de distúrbios físicos, emocionais, cognitivos e sociais. O curso aborda teoria musical, psicologia, técnicas de improvisação, musicoterapia clínica, neurociência, anatomia e práticas de intervenção terapêutica. O objetivo é capacitar os alunos a planejar e aplicar tratamentos musicais em saúde mental, reabilitação, educação especial e cuidados paliativos. Duração de 4 a 5 anos.'},
+{name:'Naturologia',area:2,desc:'O Bacharelado em Naturologia forma profissionais para atuar com terapias naturais, promovendo a saúde e o bem-estar por meio de métodos não invasivos como fitoterapia, aromaterapia, terapias manuais, dietoterapia e outras práticas integrativas. O curso aborda anatomia, fisiologia, nutrição, técnicas terapêuticas naturais, medicina tradicional e fundamentos de saúde holística. O objetivo é capacitar os alunos para atuar na prevenção e tratamento de doenças, promovendo o equilíbrio físico, emocional e mental dos pacientes. Duração de 4 a 5 anos.'},
+{name:'Nutrição',area:2,desc:'O Bacharelado em Nutrição forma profissionais capacitados para atuar na promoção da saúde, prevenção e tratamento de doenças por meio da alimentação. O curso aborda bioquímica, fisiologia, farmacologia, microbiologia, planejamento alimentar, nutrição clínica, nutrição esportiva e saúde pública. O objetivo é capacitar os alunos para avaliar e orientar dietas, trabalhar em hospitais, clínicas, escolas, empresas de alimentos e na pesquisa científica. Duração de 4 a 5 anos.'},
+{name:'Obstetrícia',area:2,desc:'O Bacharelado em Obstetrícia forma profissionais especializados no cuidado à saúde da mulher durante a gestação, o parto e o pós-parto. O curso abrange anatomia, fisiologia da reprodução, ginecologia, cuidados obstétricos, saúde da mulher, assistência ao parto, cuidados neonatais e enfermagem obstétrica. O objetivo é capacitar os alunos para realizar acompanhamento pré-natal, prestar assistência durante o parto e ajudar no pós-parto. Duração de 4 a 5 anos.'},
+{name:'Odontologia',area:2,desc:'O Bacharelado em Odontologia forma profissionais capacitados para diagnosticar, prevenir e tratar doenças e distúrbios da cavidade bucal, além de promover a saúde bucal geral. O curso abrange anatomia, fisiologia, microbiologia, patologia, periodontia, odontopediatria, cirurgia bucomaxilofacial, ortodontia e prótese dentária. O objetivo é preparar os alunos para realizar exames clínicos, tratamentos restauradores, cirurgias e orientações sobre cuidados bucais. Duração de 5 anos.'},
+{name:'Optometria',area:2,desc:'O Bacharelado em Optometria forma profissionais especializados no diagnóstico, prevenção e correção de problemas visuais, com ênfase no uso de óculos e lentes de contato. O curso abrange anatomia ocular, fisiologia da visão, óptica, refração, patologias oculares, técnicas de exame visual e educação para a saúde ocular. O objetivo é capacitar os alunos para realizar exames de vista, diagnosticar distúrbios visuais, prescrever lentes corretivas e orientar os pacientes sobre cuidados com a visão. Duração de 4 a 5 anos.'},
+{name:'Psicologia',area:2,desc:'O Bacharelado em Psicologia forma profissionais capacitados para estudar e compreender o comportamento humano, atuando em clínica, saúde mental, organizações, educação e pesquisa. O curso abrange teorias psicológicas, psicologia do desenvolvimento, neurociência, psicologia social, avaliação psicológica, psicopatologia e intervenções terapêuticas. O objetivo é preparar os alunos para aplicar técnicas de avaliação e tratamento de transtornos psicológicos, além de promover o bem-estar e o desenvolvimento humano. Duração de 5 anos.'},
+{name:'Quiropraxia',area:2,desc:'O Bacharelado em Quiropraxia forma profissionais especializados no diagnóstico, prevenção e tratamento de distúrbios do sistema musculoesquelético, com foco na coluna vertebral. O curso abrange anatomia, fisiologia, biomecânica, neurologia, técnicas de manipulação da coluna, terapias complementares e avaliação postural. O objetivo é capacitar os alunos a utilizar ajustes e manipulações articulares para aliviar dores, melhorar o movimento e promover o bem-estar geral. Duração de 4 a 5 anos.'},
+{name:'Saúde Coletiva',area:2,desc:'O Bacharelado em Saúde Coletiva forma profissionais capacitados para atuar na promoção da saúde pública e na gestão de políticas de saúde, visando à prevenção de doenças e à melhoria da qualidade de vida das populações. O curso aborda epidemiologia, saúde pública, políticas de saúde, gestão de serviços, vigilância sanitária, saúde ambiental e educação em saúde. O objetivo é preparar os alunos para desenvolver, implementar e avaliar programas de saúde comunitária. Duração de 4 anos.'},
+{name:'Terapia Ocupacional',area:2,desc:'O Bacharelado em Terapia Ocupacional forma profissionais capacitados para ajudar indivíduos a superar dificuldades físicas, mentais ou sociais que afetam sua capacidade de realizar atividades do cotidiano. O curso abrange anatomia, fisiologia, psicologia, desenvolvimento humano, técnicas terapêuticas, reabilitação e saúde mental. O objetivo é capacitar os alunos a realizar avaliações e intervenções terapêuticas, utilizando atividades ocupacionais para estimular e recuperar habilidades motoras, cognitivas e sociais. Duração de 4 a 5 anos.'},
+
+// ── ÁREA 4: Ciências Humanas e Sociais ──────────────────────────────────────
+{name:'Arqueologia',area:3,desc:'O Bacharelado em Arqueologia forma profissionais capacitados para investigar e interpretar culturas passadas por meio de vestígios materiais deixados por civilizações antigas. O curso abrange história, antropologia, geologia, técnicas de escavação, conservação de sítios arqueológicos e análise de artefatos. Os alunos aprendem métodos científicos de escavação, registro, catalogação e datação de objetos, além de desenvolverem habilidades em interpretação histórica e preservação do patrimônio cultural. Duração média de 4 anos.'},
+{name:'Ciências do Consumo',area:3,desc:'O Bacharelado em Ciências do Consumo forma profissionais especializados na análise e compreensão do comportamento dos consumidores e das relações de consumo. O curso abrange economia, sociologia, psicologia, marketing, gestão de produtos e serviços e pesquisa de mercado. O objetivo é capacitar os alunos a identificar tendências de consumo, desenvolver estratégias para atender às demandas dos consumidores e promover práticas sustentáveis no mercado. Duração de 4 anos.'},
+{name:'Licenciatura em Ciências Humanas',area:3,desc:'A Licenciatura em Ciências Humanas forma profissionais capacitados para atuar no ensino e na pesquisa de diversas áreas do conhecimento, como história, geografia, filosofia e sociologia. O curso abrange disciplinas voltadas ao estudo das sociedades, culturas, pensamento crítico, direitos humanos e questões socioambientais. O objetivo é preparar os alunos para analisar fenômenos sociais, culturais e históricos, além de desenvolver habilidades pedagógicas para atuar como professores no ensino fundamental e médio. Duração de 4 anos.'},
+{name:'Ciências Sociais',area:3,desc:'O Bacharelado e Licenciatura em Ciências Sociais forma profissionais especializados no estudo das sociedades, suas dinâmicas e estruturas, abrangendo sociologia, antropologia, ciência política, economia e história. O bacharelado capacita para atuar em pesquisa, consultoria e análise de políticas públicas, enquanto a licenciatura prepara para o ensino de sociologia no ensino fundamental e médio. Duração de 4 a 5 anos.'},
+{name:'Cooperativismo',area:3,desc:'O Bacharelado em Cooperativismo forma profissionais capacitados para atuar na gestão e desenvolvimento de cooperativas e organizações coletivas. O curso abrange administração, economia, direito cooperativo, contabilidade, gestão de pessoas e políticas públicas voltadas ao setor cooperativista. O objetivo é preparar os alunos para promover o crescimento sustentável das cooperativas, fortalecendo os princípios de autogestão, solidariedade e democracia. Duração de 4 anos.'},
+{name:'Direito',area:3,desc:'O Bacharelado em Direito forma profissionais capacitados para atuar em diversas áreas jurídicas, como advocacia, magistratura, defensoria pública e consultoria. O curso abrange direito civil, penal, constitucional, trabalhista, administrativo, empresarial e internacional, além de ética e filosofia do direito. O objetivo é preparar os alunos para interpretar e aplicar as leis, promovendo a justiça e a resolução de conflitos. Duração de 5 anos.'},
+{name:'Estudos de Gênero e Diversidade',area:3,desc:'O Bacharelado em Estudos de Gênero e Diversidade forma profissionais capacitados para analisar e intervir nas questões relacionadas às desigualdades de gênero, identidade e diversidade sexual. O curso abrange sociologia, psicologia, antropologia, direitos humanos, feminismo e políticas públicas, com foco na compreensão das dinâmicas sociais, culturais e políticas que envolvem a diversidade. O objetivo é preparar os alunos para atuar em organizações sociais, governamentais e acadêmicas, promovendo a inclusão e os direitos de grupos marginalizados. Duração de 4 anos.'},
+{name:'Filosofia',area:3,desc:'O Bacharelado e Licenciatura em Filosofia forma profissionais capacitados para estudar e ensinar as principais correntes filosóficas, desenvolvendo o pensamento crítico sobre ética, política, epistemologia, metafísica e história da filosofia. O bacharelado prepara para pesquisa e reflexão filosófica; a licenciatura habilita para o ensino de filosofia no ensino fundamental e médio. O curso abrange lógica, filosofia antiga, moderna e contemporânea, filosofia política, ética aplicada e filosofia da ciência. Duração de 4 anos.'},
+{name:'Geografia',area:3,desc:'O Bacharelado e Licenciatura em Geografia forma profissionais capacitados para estudar e ensinar as interações entre os seres humanos e o espaço geográfico, compreendendo fenômenos naturais, sociais e econômicos. O curso abrange cartografia, geopolítica, geografia física, urbanização, meio ambiente, geoprocessamento e geografia humana. O bacharelado prepara para planejamento urbano e ambiental; a licenciatura para o ensino de geografia no ensino fundamental e médio. Duração de 4 a 5 anos.'},
+{name:'História',area:3,desc:'O Bacharelado e Licenciatura em História forma profissionais para estudar e ensinar os processos históricos que moldaram as sociedades, culturas e instituições ao longo do tempo. O curso abrange história antiga, medieval, moderna e contemporânea, teoria da história e fontes históricas. O bacharelado prepara para pesquisa histórica, museus e arquivos; a licenciatura para o ensino de história no ensino fundamental e médio. Duração de 4 a 5 anos.'},
+{name:'Letras',area:3,desc:'O Bacharelado e Licenciatura em Letras forma profissionais capacitados para estudar e ensinar línguas e literaturas, com foco em interpretação textual, produção escrita e comunicação. O curso abrange linguística, literatura, fonética, semântica, gramática, tradução e literatura comparada. O bacharelado habilita para tradução, revisão e comunicação; a licenciatura para o ensino de línguas e literaturas no ensino fundamental e médio. Duração de 4 a 5 anos.'},
+{name:'Libras',area:3,desc:'O Bacharelado em Libras forma profissionais capacitados para atuar na tradução e interpretação da Língua Brasileira de Sinais, promovendo a comunicação entre surdos e ouvintes em contextos sociais e institucionais. O curso abrange linguística de sinais, comunicação visual, cultura surda, educação inclusiva, tradução e interpretação em Libras. O objetivo é preparar os alunos para atuar em escolas, hospitais, empresas e órgãos públicos. Duração de 4 anos.'},
+{name:'Linguística',area:3,desc:'O Bacharelado em Linguística forma profissionais para estudar a língua humana em seus diversos aspectos — fonologia, sintaxe, semântica, pragmática, sociolinguística e psicolinguística. O curso abrange análise da estrutura das línguas, relação entre linguagem e sociedade, desenvolvimento da linguagem e variação linguística. O objetivo é preparar os alunos para atuar em pesquisa linguística, consultoria e análise de corpora linguísticos. Duração de 4 anos.'},
+{name:'Museologia',area:3,desc:'O Bacharelado em Museologia forma profissionais capacitados para atuar na gestão, preservação e curadoria de acervos em museus, arquivos e centros culturais. O curso abrange história da arte, conservação e restauro, gestão de coleções, comunicação museológica, pedagogia do museu e exposições. O objetivo é preparar os alunos para organizar, preservar e difundir o patrimônio cultural, promovendo a educação e o acesso à cultura. Duração de 4 anos.'},
+{name:'Pedagogia',area:3,desc:'O Bacharelado e Licenciatura em Pedagogia forma profissionais capacitados para atuar na educação em diversas modalidades e níveis de ensino, além de promover a gestão escolar e a formação pedagógica. O curso abrange psicologia da educação, didática, currículo, políticas educacionais, práticas de ensino, avaliação escolar e gestão educacional. A licenciatura prepara professores para o ensino infantil e fundamental; o bacharelado habilita para coordenação pedagógica e orientação educacional. Duração de 4 anos.'},
+{name:'Psicopedagogia',area:3,desc:'O Bacharelado em Psicopedagogia forma profissionais capacitados para atuar na identificação e intervenção de dificuldades de aprendizagem, unindo conhecimentos da psicologia e da pedagogia. O curso abrange psicologia do desenvolvimento, avaliação psicopedagógica, teorias de aprendizagem, transtornos de aprendizagem, estratégias pedagógicas e orientação educacional. O objetivo é preparar os alunos para trabalhar com crianças, adolescentes e adultos em contextos educacionais, clínicas e consultorias. Duração de 4 anos.'},
+{name:'Relações Internacionais',area:3,desc:'O Bacharelado em Relações Internacionais forma profissionais capacitados para compreender e atuar nas dinâmicas políticas, econômicas, sociais e culturais entre países e organizações internacionais. O curso abrange direito internacional, teoria das relações internacionais, economia política, segurança internacional, diplomacia, geopolítica e comércio exterior. O objetivo é preparar os alunos para atuar em governos, organizações internacionais, ONGs e empresas. Duração de 4 anos.'},
+{name:'Serviço Social',area:3,desc:'O Bacharelado em Serviço Social forma profissionais capacitados para atuar na promoção de direitos sociais, na intervenção e orientação de indivíduos e grupos em situações de vulnerabilidade. O curso abrange psicologia social, sociologia, direito, políticas públicas, ética profissional e gestão social, com foco em desigualdade, pobreza, educação, saúde e justiça social. O objetivo é preparar os alunos para atuar em instituições públicas e privadas, ONGs e projetos sociais. Duração de 4 anos.'},
+{name:'Teologia',area:3,desc:'O Bacharelado e Licenciatura em Teologia forma profissionais para estudar as doutrinas religiosas, textos sagrados, filosofia e ética religiosa. O curso abrange história da religião, estudos bíblicos, filosofia da religião, ética cristã, teologia sistemática e teologia pastoral. A licenciatura prepara professores de religião para o ensino fundamental e médio; o bacharelado habilita para liderança religiosa, aconselhamento pastoral e pesquisa teológica. Duração de 4 a 5 anos.'},
+{name:'Tradutor e Intérprete',area:3,desc:'O Bacharelado em Tradutor e Intérprete forma profissionais para atuar na tradução e interpretação entre línguas em eventos internacionais e organizações multilíngues. O curso abrange linguística, técnicas de tradução, interpretação simultânea e consecutiva, literatura, terminologia técnica e ética profissional. O objetivo é preparar os alunos para traduzir textos e interpretar falas em diferentes idiomas, com ênfase na precisão, fluência e compreensão cultural. Duração de 4 anos.'},
+
+// ── ÁREA 5: Comunicação e Informação ─────────────────────────────────────────
+{name:'Arquivologia',area:4,desc:'O Bacharelado em Arquivologia forma profissionais capacitados para organizar, gerenciar e preservar documentos e informações em instituições públicas e privadas. O curso abrange gestão de arquivos, classificação documental, conservação preventiva, diplomática e paleografia, legislação arquivística e tecnologias da informação. O objetivo é preparar os alunos para atuar na administração de arquivos físicos e digitais, promovendo a preservação do patrimônio documental e a eficiência na gestão da informação. Duração de 4 anos.'},
+{name:'Biblioteconomia',area:4,desc:'O Bacharelado e Licenciatura em Biblioteconomia forma profissionais para gerenciar, organizar e disseminar informações em bibliotecas e centros de documentação. O curso abrange catalogação, classificação, gestão de acervos, organização de bibliotecas, tecnologias da informação e políticas públicas de leitura. O bacharelado habilita para atuar como bibliotecário em bibliotecas públicas, escolares e universitárias; a licenciatura habilita para o ensino da área. Duração de 4 anos.'},
+{name:'Cinema e Audiovisual',area:4,desc:'O Bacharelado e Licenciatura em Cinema e Audiovisual forma profissionais para atuar na criação, produção, direção e análise de obras audiovisuais. O curso abrange história do cinema, roteiro, direção, fotografia, edição, som, animação e teoria do audiovisual. O bacharelado prepara para trabalhar na indústria cinematográfica; a licenciatura habilita para o ensino de cinema em instituições educacionais. Duração de 4 anos.'},
+{name:'Comunicação em Mídias Digitais',area:4,desc:'O Bacharelado em Comunicação em Mídias Digitais forma profissionais para atuar na criação, gestão e análise de conteúdos e estratégias de comunicação voltadas para o ambiente digital. O curso abrange marketing digital, design de interfaces, produção de conteúdo digital, análise de dados, redes sociais, jornalismo digital e desenvolvimento de mídias interativas. O objetivo é preparar os alunos para trabalhar em empresas, agências e startups, desenvolvendo estratégias inovadoras para os meios digitais. Duração de 4 anos.'},
+{name:'Comunicação Organizacional',area:4,desc:'O Bacharelado em Comunicação Organizacional forma profissionais para gerenciar e desenvolver estratégias de comunicação interna e externa em organizações públicas, privadas e do terceiro setor. O curso abrange relações públicas, comunicação corporativa, gestão de crises, comunicação interna, cultura organizacional, marketing e estratégias de mediação entre empresa e público. O objetivo é preparar os alunos para melhorar o fluxo de informações, promover a imagem institucional e fortalecer as relações com stakeholders. Duração de 4 anos.'},
+{name:'Educomunicação',area:4,desc:'O Bacharelado e Licenciatura em Educomunicação forma profissionais para integrar processos educativos e comunicacionais, utilizando ferramentas de mídia e comunicação para promover a educação e o desenvolvimento social. O curso abrange pedagogia, comunicação social, tecnologias educacionais, produção midiática e gestão de projetos educomunicativos. O bacharelado atua em escolas, ONGs e projetos sociais; a licenciatura habilita professores para o ensino de educomunicação. Duração de 4 anos.'},
+{name:'Estudos de Mídia',area:4,desc:'O Bacharelado em Estudos de Mídia forma profissionais para analisar, criar e gerir conteúdos midiáticos, entendendo as dinâmicas culturais, políticas e sociais que envolvem os meios de comunicação. O curso abrange teoria da comunicação, análise de mídias, produção audiovisual, novas tecnologias, cultura digital, comunicação política e marketing. O objetivo é preparar os alunos para atuar na produção de conteúdo, crítica midiática, curadoria cultural e gestão de mídias. Duração de 4 anos.'},
+{name:'Gestão da Informação',area:4,desc:'O Bacharelado em Gestão da Informação forma profissionais para organizar, gerenciar e analisar fluxos de informação em empresas, instituições e órgãos públicos. O curso abrange gestão de sistemas de informação, tecnologias da informação, análise de dados, segurança da informação, inteligência competitiva e governança de TI. O objetivo é preparar os alunos para atuar na otimização de processos informacionais, apoiando a tomada de decisões e a inovação tecnológica nas organizações. Duração de 4 anos.'},
+{name:'Jornalismo',area:4,desc:'O Bacharelado em Jornalismo forma profissionais capacitados para atuar na produção, apuração e divulgação de informações em meios de comunicação como rádio, TV, internet, jornais e revistas. O curso abrange redação jornalística, ética e legislação, fotojornalismo, telejornalismo, jornalismo digital, assessoria de imprensa e técnicas de entrevista e reportagem. O objetivo é preparar os alunos para investigar, reportar e transmitir notícias com precisão e responsabilidade. Duração de 4 anos.'},
+{name:'Produção Cultural',area:4,desc:'O Bacharelado em Produção Cultural forma profissionais para planejar, organizar e gerenciar projetos e eventos culturais. O curso abrange gestão cultural, políticas culturais, economia criativa, curadoria, produção de eventos, captação de recursos, marketing cultural e produção audiovisual. O objetivo é preparar os alunos para atuar em instituições culturais, festivais, museus e outros espaços culturais, fomentando a criação e sustentabilidade de projetos culturais. Duração de 4 anos.'},
+{name:'Produção Editorial',area:4,desc:'O Bacharelado em Produção Editorial forma profissionais para planejar, coordenar e produzir conteúdos editoriais como livros, revistas, jornais e materiais digitais. O curso abrange teoria da edição, gestão de produção, design gráfico, marketing editorial, direitos autorais, processos gráficos e novas tecnologias da comunicação. O objetivo é preparar os alunos para atuar em editoras, agências de comunicação e plataformas digitais. Duração de 4 anos.'},
+{name:'Publicidade e Propaganda',area:4,desc:'O Bacharelado em Publicidade e Propaganda forma profissionais para planejar, criar e gerir campanhas publicitárias, desenvolvendo estratégias de comunicação para promover produtos, serviços e marcas. O curso abrange marketing, criação publicitária, comportamento do consumidor, mídia digital, redação publicitária, design gráfico, planejamento estratégico e pesquisa de mercado. O objetivo é preparar os alunos para atuar em agências de publicidade e departamentos de marketing. Duração de 4 anos.'},
+{name:'Rádio, TV e Internet',area:4,desc:'O Bacharelado em Rádio, TV e Internet forma profissionais para atuar na produção, direção, gestão e transmissão de conteúdos audiovisuais em rádio, televisão e meios digitais. O curso abrange produção de áudio e vídeo, jornalismo radiofônico, direção de programas, roteirização, edição, mídias digitais e estratégias de transmissão online. O objetivo é preparar os alunos para atuar em emissoras de rádio e TV, plataformas de streaming e outras empresas de comunicação. Duração de 4 anos.'},
+{name:'Relações Públicas',area:4,desc:'O Bacharelado em Relações Públicas forma profissionais para gerenciar a comunicação entre organizações e seus diversos públicos, construindo e mantendo a imagem institucional. O curso abrange comunicação organizacional, estratégias de relacionamento, planejamento de eventos, gestão de crises, branding, assessoria de imprensa e ética profissional. O objetivo é preparar os alunos para atuar em empresas, agências de comunicação e governos. Duração de 4 anos.'},
+{name:'Secretariado Executivo',area:4,desc:'O Bacharelado em Secretariado Executivo forma profissionais para atuar no suporte administrativo e organizacional de executivos e empresas. O curso abrange gestão de escritório, administração de tempo, comunicação empresarial, ética profissional, língua estrangeira, organização de eventos e tecnologia aplicada ao secretariado. O objetivo é preparar os alunos para desempenhar funções de apoio estratégico, organizando rotinas e facilitando a comunicação em ambientes corporativos. Duração de 4 anos.'},
+
+// ── ÁREA 6: Artes e Design ───────────────────────────────────────────────────
+{name:'Animação',area:5,desc:'O Bacharelado em Animação forma profissionais para criar, produzir e gerir projetos de animação para filmes, games, publicidade ou mídias digitais. O curso abrange técnicas de animação 2D e 3D, modelagem, storyboard, design de personagens, computação gráfica, efeitos visuais, narrativa visual e direção de arte. O objetivo é preparar os alunos para atuar na indústria de entretenimento, publicidade, cinema e plataformas digitais. Duração de 4 anos.'},
+{name:'Arquitetura e Urbanismo',area:5,desc:'O Bacharelado em Arquitetura e Urbanismo forma profissionais para projetar, planejar e executar obras de arquitetura e urbanismo, com foco na criação de ambientes urbanos e edificações funcionais, sustentáveis e esteticamente adequadas. O curso abrange história da arquitetura, urbanismo, desenho técnico, estruturas, conforto ambiental, sustentabilidade, planejamento urbano, paisagismo e legislação. O objetivo é preparar os alunos para desenvolver projetos arquitetônicos, urbanísticos e paisagísticos. Duração de 5 anos.'},
+{name:'Artes Visuais',area:5,desc:'O Bacharelado e Licenciatura em Artes Visuais forma profissionais para atuar no campo da arte e da educação artística, desenvolvendo habilidades criativas e técnicas em diversas linguagens e suportes artísticos. O curso abrange história da arte, desenho, pintura, escultura, gravura, fotografia, arte digital, estética e curadoria. O bacharelado prepara artistas; a licenciatura habilita professores de artes visuais em escolas. Duração de 4 anos.'},
+{name:'Comunicação das Artes do Corpo',area:5,desc:'O Bacharelado em Comunicação das Artes do Corpo forma profissionais para atuar na produção, interpretação e comunicação através da linguagem do corpo — dança, teatro, performance e outras práticas artísticas. O curso abrange anatomia, expressão corporal, dança contemporânea, improvisação, coreografia, técnicas de movimento, história da arte e comunicação não verbal. O objetivo é preparar os alunos para se expressarem artisticamente e atuar como intérpretes, criadores ou educadores. Duração de 4 anos.'},
+{name:'Conservação e Restauro',area:5,desc:'O Bacharelado em Conservação e Restauro forma profissionais para preservar, conservar e restaurar bens culturais como obras de arte, documentos, móveis e outros patrimônios materiais. O curso abrange química aplicada à conservação, história da arte, técnicas de restauro, conservação preventiva, patologia de materiais, museologia e gestão do patrimônio cultural. O objetivo é preparar os alunos para atuar em museus, arquivos e instituições culturais. Duração de 4 anos.'},
+{name:'Dança',area:5,desc:'O Bacharelado e Licenciatura em Dança forma profissionais para atuar como artistas e intérpretes (bacharelado) ou como professores de dança (licenciatura). O curso abrange história da dança, técnicas de movimento, coreografia, composição, anatomia, expressão corporal, dança contemporânea e clássica. A licenciatura prepara professores para o ensino de dança em escolas e instituições. Duração de 4 anos.'},
+{name:'Design',area:5,desc:'O Bacharelado em Design forma profissionais para criar e desenvolver soluções visuais e funcionais em design gráfico, design de produto, design de interiores, design de moda e design digital. O curso abrange teoria do design, composição visual, design de interfaces, tipografia, desenho industrial, ergonomia, história do design, marketing e sustentabilidade. O objetivo é preparar os alunos para projetar produtos, ambientes e experiências que atendam às necessidades estéticas, funcionais e sociais. Duração de 4 anos.'},
+{name:'Design de Games',area:5,desc:'O Bacharelado em Design de Games forma profissionais para criar, projetar e desenvolver jogos digitais, desde a concepção inicial até a implementação e lançamento. O curso abrange design de interação, programação de jogos, narrativa interativa, arte e animação para jogos, mecânicas de jogos, modelagem 3D, áudio para games e testes de usabilidade. O objetivo é preparar os alunos para atuar na indústria de entretenimento digital, criando jogos inovadores. Duração de 4 anos.'},
+{name:'Design de Interiores',area:5,desc:'O Bacharelado em Design de Interiores forma profissionais para planejar, projetar e transformar ambientes internos, promovendo soluções estéticas, funcionais e sustentáveis para espaços residenciais, comerciais e corporativos. O curso abrange história do design de interiores, ergonomia, iluminação, acústica, projeto de ambientes, materiais de acabamento, sustentabilidade e tecnologias aplicadas ao design. Duração de 4 anos.'},
+{name:'Design de Moda',area:5,desc:'O Bacharelado em Design de Moda forma profissionais para criar e desenvolver coleções de roupas e acessórios, combinando estética, funcionalidade e inovação. O curso abrange história da moda, desenho de moda, modelagem, estilismo, desenvolvimento de coleções, marketing de moda, produção e gestão de desfiles, além de estudos sobre tecidos e materiais. Duração de 4 anos.'},
+{name:'Fotografia',area:5,desc:'O Bacharelado em Fotografia forma profissionais para atuar na captura, edição e produção de imagens fotográficas em fotografia publicitária, editorial, documental, de moda e artística. O curso abrange história da fotografia, teoria da imagem, técnicas de fotografia digital e analógica, iluminação, composição, pós-produção e ética profissional. O objetivo é preparar os alunos para criar imagens impactantes e comunicar conceitos de forma visual. Duração de 4 anos.'},
+{name:'História da Arte',area:5,desc:'O Bacharelado em História da Arte forma profissionais para estudar, analisar e interpretar as produções artísticas ao longo da história, compreendendo o contexto social, cultural e político de diferentes períodos. O curso abrange história da arte ocidental e não ocidental, teoria da arte, estética, técnicas artísticas, museologia, conservação e restauro. O objetivo é preparar os alunos para atuar como curadores, pesquisadores, críticos de arte e gestores de coleções. Duração de 4 anos.'},
+{name:'Música',area:5,desc:'O Bacharelado e Licenciatura em Música forma profissionais para a performance musical (bacharelado) ou para o ensino de música (licenciatura). O curso abrange teoria musical, prática instrumental, história da música, harmonia, percepção auditiva, composição, pedagogia musical, técnicas de ensino e música digital. A licenciatura habilita educadores musicais para o ensino em escolas e instituições de ensino. Duração de 4 anos.'},
+{name:'Teatro',area:5,desc:'O Bacharelado e Licenciatura em Teatro forma profissionais para atuar como artistas (bacharelado) ou para ensinar teatro (licenciatura), desenvolvendo habilidades de interpretação, direção, dramaturgia e produção teatral. O curso abrange história do teatro, técnicas de interpretação, direção cênica, cenografia, iluminação, dramaturgia e produção teatral. A licenciatura prepara educadores para o ensino de teatro em escolas e outras instituições. Duração de 4 anos.'},
+
+// ── ÁREA 7: Ciências Exatas e Informática ────────────────────────────────────
+{name:'Astronomia',area:6,desc:'O Bacharelado em Astronomia forma profissionais para estudar e pesquisar os corpos celestes, os fenômenos cósmicos e as leis físicas que regem o universo. O curso abrange física, matemática, astrofísica, cosmologia, mecânica celeste, observação astronômica, astrobiologia, instrumentação e simulações computacionais. O objetivo é preparar os alunos para atuar em pesquisas científicas, desenvolvimento de tecnologias para observação espacial e educação científica. Duração de 4 anos.'},
+{name:'Ciência da Computação',area:6,desc:'O Bacharelado em Ciência da Computação forma profissionais para desenvolver e aplicar soluções computacionais em programação, análise de sistemas, inteligência artificial, redes de computadores e banco de dados. O curso abrange algoritmos, estruturas de dados, engenharia de software, arquitetura de computadores, matemática aplicada, sistemas operacionais, segurança da informação e programação em diversas linguagens. O objetivo é preparar os alunos para o desenvolvimento de sistemas, softwares e soluções tecnológicas. Duração de 4 a 5 anos.'},
+{name:'Ciência e Tecnologia',area:6,desc:'O Bacharelado em Ciência e Tecnologia forma profissionais com formação ampla e interdisciplinar, capacitados para atuar em diversas áreas da ciência e da tecnologia. O curso abrange disciplinas fundamentais como matemática, física, química, biologia, informática, além de tópicos relacionados a novas tecnologias, inovação e sustentabilidade. O objetivo é fornecer uma base sólida em ciências exatas e naturais, permitindo que os alunos se especializem em diferentes áreas. Duração de 3 a 4 anos.'},
+{name:'Licenciatura em Computação',area:6,desc:'A Licenciatura em Computação forma profissionais para atuar como educadores no ensino de computação e tecnologias em diferentes níveis de ensino. O curso abrange programação, algoritmos, lógica de programação, redes de computadores, bancos de dados, matemática computacional, didática do ensino de computação e metodologias de ensino. O objetivo é preparar os alunos para ensinar computação em escolas, tanto no ensino básico quanto técnico. Duração de 3 a 4 anos.'},
+{name:'Estatística',area:6,desc:'O Bacharelado em Estatística forma profissionais para coletar, organizar, analisar e interpretar dados, utilizando métodos matemáticos e computacionais para resolver problemas em saúde, economia, engenharia, ciências sociais e pesquisa. O curso abrange probabilidade, teoria da estatística, análise de dados, inferência estatística, modelagem matemática, cálculo, estatística computacional e análise de grandes volumes de dados (big data). Duração de 4 anos.'},
+{name:'Física',area:6,desc:'O Bacharelado e Licenciatura em Física forma profissionais para atuar como físicos em pesquisas e aplicações tecnológicas (bacharelado) ou para ensinar física em escolas (licenciatura). O curso abrange mecânica, termodinâmica, eletromagnetismo, óptica, física moderna, cálculo, física experimental, astrofísica e metodologia do ensino de física. O bacharelado prepara para pesquisa científica e desenvolvimento de tecnologias; a licenciatura forma educadores qualificados para o ensino básico e médio. Duração de 4 a 5 anos.'},
+{name:'Informática Biomédica',area:6,desc:'O Bacharelado em Informática Biomédica forma profissionais para aplicar técnicas de computação e tecnologias da informação na saúde, com foco no desenvolvimento e gerenciamento de sistemas e equipamentos que auxiliam no diagnóstico, tratamento e gestão de dados médicos. O curso abrange programação, banco de dados, redes de computadores, processamento de sinais biomédicos, sistemas de informação em saúde, inteligência artificial e bioinformática. Duração de 4 a 5 anos.'},
+{name:'Matemática',area:6,desc:'O Bacharelado e Licenciatura em Matemática forma profissionais para atuar como matemáticos em pesquisa e análise (bacharelado) ou para ensinar matemática em escolas (licenciatura). O curso abrange álgebra, cálculo, geometria, estatística, teoria dos números, análise matemática, lógica, métodos numéricos e didática do ensino de matemática. O bacharelado prepara para resolução de problemas complexos em economia, engenharia e tecnologia; a licenciatura forma educadores qualificados. Duração de 4 a 5 anos.'},
+{name:'Nanotecnologia',area:6,desc:'O Bacharelado em Nanotecnologia forma profissionais para trabalhar no desenvolvimento e aplicação de tecnologias em escala nanométrica, explorando as propriedades e comportamentos dos materiais em nível atômico e molecular. O curso abrange física, química, biologia, materiais, ciência dos nanomateriais, nanotecnologia aplicada à saúde, nanofabricação, sistemas nanoeletrônicos e nanotecnologia ambiental. Duração de 4 a 5 anos.'},
+{name:'Química',area:6,desc:'O Bacharelado e Licenciatura em Química forma profissionais para atuar em indústrias, laboratórios de pesquisa e desenvolvimento (bacharelado) ou para ensinar química em escolas (licenciatura). O curso abrange química orgânica, inorgânica, analítica, física, bioquímica, termodinâmica, química dos materiais e metodologia do ensino de química. O bacharelado prepara para experimentos e desenvolvimento de novos materiais; a licenciatura forma educadores especializados. Duração de 4 a 5 anos.'},
+{name:'Sistemas de Informação',area:6,desc:'O Bacharelado em Sistemas de Informação forma profissionais para planejar, desenvolver, implementar e gerenciar sistemas computacionais e de informação em diversas organizações. O curso abrange programação, análise de sistemas, banco de dados, redes de computadores, segurança da informação, gestão de projetos de TI, engenharia de software, inteligência artificial e arquitetura de sistemas. O objetivo é preparar os alunos para otimizar processos e a gestão de dados nas empresas. Duração de 4 a 5 anos.'},
+
+// ── ÁREA 8: Engenharias e Produção ───────────────────────────────────────────
+{name:'Engenharia Acústica',area:7,desc:'O Bacharelado em Engenharia Acústica forma profissionais para projetar, analisar e controlar o som e as vibrações em diversos ambientes e sistemas. O curso abrange acústica geral, acústica ambiental, vibrações mecânicas, fonotécnica, design de sistemas de áudio, eletroacústica, acústica de salas e tecnologias de controle de ruído. O objetivo é preparar os alunos para projetar ambientes acústicos ideais e desenvolver soluções para problemas relacionados ao som em construção civil, telecomunicações e saúde. Duração de 5 anos.'},
+{name:'Engenharia Aeronáutica',area:7,desc:'O Bacharelado em Engenharia Aeronáutica forma profissionais para projetar, desenvolver, testar e operar aeronaves, satélites e outros sistemas aeroespaciais. O curso abrange física, matemática avançada, dinâmica de voo, aerodinâmica, controle de voo, propulsão, materiais aeroespaciais, estruturas aeronáuticas e sistemas de navegação. O objetivo é preparar os alunos para atuar em indústrias de aviação civil e militar, empresas aeroespaciais e centros de pesquisa. Duração de 5 anos.'},
+{name:'Engenharia Agrícola',area:7,desc:'O Bacharelado em Engenharia Agrícola forma profissionais para aplicar princípios da engenharia no desenvolvimento de tecnologias voltadas para a produção agrícola sustentável. O curso abrange irrigação e drenagem, mecanização agrícola, solos, eletrificação rural, construção rural, recursos hídricos, gestão ambiental e automação de processos agroindustriais. O objetivo é preparar os alunos para otimizar processos produtivos, melhorar a eficiência no uso de recursos naturais e desenvolver tecnologias para a produção agrícola. Duração de 5 anos.'},
+{name:'Engenharia Ambiental e Sanitária',area:7,desc:'O Bacharelado em Engenharia Ambiental e Sanitária forma profissionais para desenvolver soluções que minimizem os impactos ambientais e promovam a sustentabilidade, além de garantir a qualidade dos serviços de saneamento básico. O curso abrange gestão de resíduos, tratamento de água e esgoto, controle de poluição, avaliação de impacto ambiental, gestão de recursos hídricos, recuperação de áreas degradadas e energias renováveis. Duração de 5 anos.'},
+{name:'Engenharia Biomédica',area:7,desc:'O Bacharelado em Engenharia Biomédica forma profissionais para desenvolver tecnologias e dispositivos aplicados à saúde, combinando princípios de engenharia com biologia e medicina. O curso abrange bioinstrumentação, engenharia de tecidos, biomecânica, eletrônica médica, processamento de sinais biomédicos, desenvolvimento de próteses e dispositivos médicos e inteligência artificial aplicada à saúde. O objetivo é preparar os alunos para projetar soluções tecnológicas que melhorem o diagnóstico, tratamento e reabilitação de pacientes. Duração de 5 anos.'},
+{name:'Engenharia Bioquímica de Bioprocessos e Biotecnologia',area:7,desc:'O Bacharelado em Engenharia Bioquímica de Bioprocessos e Biotecnologia forma profissionais para desenvolver e otimizar processos biotecnológicos em indústrias de alimentos, farmacêutica, química e biocombustíveis. O curso abrange bioquímica, microbiologia, engenharia de bioprocessos, cinética de reações biológicas, biotecnologia aplicada, fermentação industrial, bioreatores e engenharia genética. O objetivo é preparar os alunos para utilizar organismos vivos no desenvolvimento de produtos industriais inovadores. Duração de 5 anos.'},
+{name:'Engenharia Cartográfica e de Agrimensura',area:7,desc:'O Bacharelado em Engenharia Cartográfica e de Agrimensura forma profissionais para realizar medições precisas da superfície terrestre e desenvolver mapas e modelos tridimensionais. O curso abrange topografia, geodésia, fotogrametria, sensoriamento remoto, sistemas de informações geográficas (SIG), cartografia digital e geoprocessamento. O objetivo é preparar os alunos para atuar na coleta, análise e interpretação de dados geoespaciais para planejamento urbano e gestão ambiental. Duração de 5 anos.'},
+{name:'Engenharia Civil',area:7,desc:'O Bacharelado em Engenharia Civil forma profissionais para planejar, projetar, gerenciar e executar obras de infraestrutura como edifícios, estradas, pontes, barragens e sistemas de saneamento. O curso abrange mecânica dos solos, materiais de construção, resistência dos materiais, hidrologia, estruturas de concreto, planejamento urbano, geotecnia e gestão de projetos. O objetivo é preparar os alunos para desenvolver soluções eficientes e seguras em obras de construção civil. Duração de 5 anos.'},
+{name:'Engenharia da Computação',area:7,desc:'O Bacharelado em Engenharia da Computação forma profissionais para projetar, desenvolver e gerenciar sistemas de hardware e software, combinando conhecimentos de engenharia elétrica e ciência da computação. O curso abrange programação, eletrônica digital, sistemas embarcados, arquitetura de computadores, inteligência artificial, redes de computadores, segurança da informação e engenharia de software. O objetivo é preparar os alunos para criar soluções tecnológicas inovadoras em automação, telecomunicações e robótica. Duração de 5 anos.'},
+{name:'Engenharia de Alimentos',area:7,desc:'O Bacharelado em Engenharia de Alimentos forma profissionais para atuar no desenvolvimento, produção, conservação e controle de qualidade de alimentos, aplicando conhecimentos de engenharia, química e microbiologia. O curso abrange tecnologia de alimentos, engenharia de processos, controle de qualidade, microbiologia de alimentos, conservação, embalagens, segurança alimentar e gestão industrial. O objetivo é preparar os alunos para criar processos produtivos eficientes e seguros. Duração de 5 anos.'},
+{name:'Engenharia de Biossistemas',area:7,desc:'O Bacharelado em Engenharia de Biossistemas forma profissionais para desenvolver e integrar tecnologias voltadas para a otimização de sistemas biológicos, com foco na produção sustentável e no uso eficiente de recursos naturais. O curso abrange biotecnologia, automação de processos biológicos, sistemas de irrigação, bioenergia, gestão de resíduos, engenharia de bioprocessos e modelagem de sistemas ecológicos. Duração de 5 anos.'},
+{name:'Engenharia de Controle e Automação',area:7,desc:'O Bacharelado em Engenharia de Controle e Automação forma profissionais para projetar, desenvolver e implementar sistemas automatizados em setores industriais, visando a otimização de processos produtivos. O curso abrange controle de processos, robótica, eletrônica, sistemas embarcados, inteligência artificial, sensores e atuadores, instrumentação e automação industrial. O objetivo é preparar os alunos para criar soluções tecnológicas que integrem software e hardware. Duração de 5 anos.'},
+{name:'Engenharia de Energia',area:7,desc:'O Bacharelado em Engenharia de Energia forma profissionais para planejar, desenvolver e otimizar sistemas e processos voltados para a produção, distribuição e uso eficiente de energia, com foco em fontes renováveis e sustentabilidade. O curso abrange termodinâmica, energias renováveis (solar, eólica, biomassa), eficiência energética, sistemas elétricos, controle de processos e gestão de recursos energéticos. Duração de 5 anos.'},
+{name:'Engenharia de Inovação',area:7,desc:'O Bacharelado em Engenharia de Inovação forma profissionais para liderar e desenvolver processos inovadores em diversos setores, aplicando conhecimentos técnicos, empresariais e criativos. O curso abrange gestão de inovação, empreendedorismo, design thinking, análise de mercado, desenvolvimento de produtos, prototipagem, inteligência artificial e tecnologias emergentes. O objetivo é preparar os alunos para criar e implementar novas tecnologias e modelos de negócios. Duração de 4 a 5 anos.'},
+{name:'Engenharia de Materiais',area:7,desc:'O Bacharelado em Engenharia de Materiais forma profissionais para desenvolver, testar e aplicar materiais em diversas áreas da indústria. O curso abrange física dos materiais, metalurgia, polímeros, cerâmicas, biomateriais, nanomateriais, processos de fabricação, caracterização de materiais e engenharia de superfícies. O objetivo é preparar os alunos para selecionar e otimizar materiais para setores como automotivo, aeroespacial, eletrônicos, construção e saúde. Duração de 5 anos.'},
+{name:'Engenharia de Minas',area:7,desc:'O Bacharelado em Engenharia de Minas forma profissionais para atuar na extração, processamento e gestão de recursos minerais, com foco na sustentabilidade, segurança e eficiência dos processos mineradores. O curso abrange geologia, mecânica dos solos, mineração subterrânea e a céu aberto, processamento de minérios, gestão de recursos naturais, geoprocessamento e segurança no trabalho. Duração de 5 anos.'},
+{name:'Engenharia de Pesca',area:7,desc:'O Bacharelado em Engenharia de Pesca forma profissionais para atuar no manejo sustentável de recursos pesqueiros e na produção de alimentos oriundos da pesca e da aquicultura. O curso abrange biologia marinha, ictiologia, hidrodinâmica, gestão pesqueira, recursos aquáticos, sustentabilidade ambiental, aquacultura e processamento de produtos pesqueiros. O objetivo é preparar os alunos para desenvolver soluções para a exploração e preservação dos recursos pesqueiros. Duração de 5 anos.'},
+{name:'Engenharia de Petróleo',area:7,desc:'O Bacharelado em Engenharia de Petróleo forma profissionais para atuar na exploração, produção, refino e transporte de petróleo e gás natural. O curso abrange geologia do petróleo, perfuração, reservatórios, refino, operações de plataforma, transporte e logística de petróleo e gás, segurança operacional e tecnologia de exploração em águas profundas. O objetivo é preparar os alunos para lidar com os desafios técnicos e ambientais da indústria petrolífera. Duração de 5 anos.'},
+{name:'Engenharia de Produção',area:7,desc:'O Bacharelado em Engenharia de Produção forma profissionais para planejar, otimizar e gerenciar processos produtivos, com foco na melhoria da eficiência, qualidade e redução de custos nas empresas e indústrias. O curso abrange matemática, estatística, gestão de processos, controle de qualidade, logística, gestão da cadeia de suprimentos, ergonomia, economia e sistemas de produção. O objetivo é preparar os alunos para integrar recursos humanos, materiais e tecnológicos visando a máxima produtividade. Duração de 5 anos.'},
+{name:'Engenharia de Segurança no Trabalho',area:7,desc:'O Bacharelado em Engenharia de Segurança no Trabalho forma profissionais para atuar na prevenção de acidentes e na promoção da saúde e segurança dos trabalhadores. O curso abrange legislação trabalhista, ergonomia, técnicas de segurança, prevenção e controle de riscos, higiene ocupacional, gestão de saúde e segurança no trabalho, segurança de máquinas e análise de acidentes. O objetivo é preparar os alunos para desenvolver e implementar políticas de segurança no trabalho. Duração de 5 anos.'},
+{name:'Engenharia de Sistemas',area:7,desc:'O Bacharelado em Engenharia de Sistemas forma profissionais para projetar, implementar e gerenciar sistemas complexos, combinando conhecimentos de engenharia, computação e gestão. O curso abrange modelagem de sistemas, análise de requisitos, design de sistemas, inteligência artificial, redes de computadores, automação, algoritmos e gestão de projetos. O objetivo é preparar os alunos para integrar e otimizar processos e tecnologias em indústria, telecomunicações, TI, saúde e logística. Duração de 5 anos.'},
+{name:'Engenharia de Software',area:7,desc:'O Bacharelado em Engenharia de Software forma profissionais para projetar, desenvolver, testar e gerenciar sistemas de software complexos, com foco na criação de soluções tecnológicas eficientes e seguras. O curso abrange programação, engenharia de requisitos, design de sistemas, arquitetura de software, banco de dados, testes de software, segurança da informação, inteligência artificial e metodologias ágeis. Duração de 4 a 5 anos.'},
+{name:'Engenharia de Telecomunicações',area:7,desc:'O Bacharelado em Engenharia de Telecomunicações forma profissionais para projetar, desenvolver, implementar e gerenciar sistemas de comunicação, incluindo redes de dados, telefonia, TV digital, internet e sistemas sem fio. O curso abrange sinais e sistemas, eletrônica, redes de comunicação, modulação e codificação, comunicação via satélite, redes móveis, transmissão de dados e segurança em telecomunicações. Duração de 5 anos.'},
+{name:'Engenharia de Transporte e da Mobilidade',area:7,desc:'O Bacharelado em Engenharia de Transporte e da Mobilidade forma profissionais para planejar, projetar e gerenciar sistemas de transporte e mobilidade urbana. O curso abrange engenharia de tráfego, transporte público, transportes terrestres, marítimos e aéreos, planejamento urbano, logística, infraestrutura viária, sistemas de transporte inteligentes e gestão de mobilidade urbana. Duração de 5 anos.'},
+{name:'Engenharia Elétrica',area:7,desc:'O Bacharelado em Engenharia Elétrica forma profissionais para projetar, desenvolver e gerenciar sistemas elétricos, eletrônicos e de automação, com foco em energia, controle e comunicação. O curso abrange circuitos elétricos, eletrônica, sistemas de controle, máquinas e equipamentos elétricos, sistemas de potência, transmissão de energia, instrumentação e automação. O objetivo é preparar os alunos para atuar na geração, distribuição e utilização eficiente de energia elétrica. Duração de 5 anos.'},
+{name:'Engenharia Eletrônica',area:7,desc:'O Bacharelado em Engenharia Eletrônica forma profissionais para projetar, desenvolver e implementar sistemas eletrônicos, com foco em dispositivos e circuitos para automação e controle de processos. O curso abrange circuitos eletrônicos, sistemas embarcados, microcontroladores, telecomunicações, dispositivos semicondutores, controle digital, robótica, eletrônica de potência e automação industrial. Duração de 5 anos.'},
+{name:'Engenharia Física',area:7,desc:'O Bacharelado em Engenharia Física forma profissionais para aplicar os princípios da física no desenvolvimento de tecnologias e soluções inovadoras. O curso abrange mecânica clássica, termodinâmica, eletromagnetismo, óptica, física quântica, materiais, nanomateriais, instrumentação e sistemas computacionais aplicados à física. O objetivo é preparar os alunos para integrar física e engenharia em eletrônica, energias renováveis, materiais avançados e nanotecnologia. Duração de 5 anos.'},
+{name:'Engenharia Florestal',area:7,desc:'O Bacharelado em Engenharia Florestal forma profissionais para atuar na gestão, conservação e manejo sustentável de florestas e recursos naturais. O curso abrange silvicultura, manejo florestal, ecologia, geoprocessamento, tecnologia de madeiras, recursos hídricos, restauração florestal e gestão ambiental. O objetivo é preparar os alunos para trabalhar na conservação da biodiversidade, na produção sustentável de madeira e na recuperação de áreas degradadas. Duração de 5 anos.'},
+{name:'Engenharia Hídrica',area:7,desc:'O Bacharelado em Engenharia Hídrica forma profissionais para atuar na gestão e otimização dos recursos hídricos, com foco na sustentabilidade e no planejamento de sistemas de abastecimento de água, tratamento de esgoto e controle de enchentes. O curso abrange hidráulica, hidrologia, recursos hídricos, saneamento ambiental, tratamento de água e efluentes, irrigação, drenagem urbana e planejamento de bacias hidrográficas. Duração de 5 anos.'},
+{name:'Engenharia Industrial Madeireira',area:7,desc:'O Bacharelado em Engenharia Industrial Madeireira forma profissionais para gerenciar, otimizar e inovar na produção e no uso da madeira na indústria. O curso abrange processos de transformação da madeira, química da madeira, tecnologias de fabricação, gestão industrial, controle de qualidade, projetos de produtos madeireiros, sustentabilidade e logística. O objetivo é preparar os alunos para atuar na indústria madeireira, desenvolvendo soluções sustentáveis no uso dos recursos florestais. Duração de 5 anos.'},
+{name:'Engenharia Mecânica',area:7,desc:'O Bacharelado em Engenharia Mecânica forma profissionais para projetar, desenvolver e gerenciar sistemas mecânicos, com foco na criação de máquinas, equipamentos e processos industriais. O curso abrange mecânica dos sólidos, termodinâmica, fluidos, materiais, resistência dos materiais, controle de processos, dinâmica, automação, sistemas de fabricação e análise estrutural. O objetivo é preparar os alunos para atuar em indústria automotiva, aeroespacial, energética e de manufatura. Duração de 5 anos.'},
+{name:'Engenharia Mecatrônica',area:7,desc:'O Bacharelado em Engenharia Mecatrônica forma profissionais para projetar, desenvolver e integrar sistemas automatizados, combinando conhecimentos de mecânica, eletrônica, computação e controle. O curso abrange sistemas de controle, robótica, automação industrial, eletrônica digital, sensores, microcontroladores, inteligência artificial, mecânica dos sólidos e dinâmica dos sistemas mecatrônicos. O objetivo é preparar os alunos para desenvolver soluções em manufatura, robótica, veículos autônomos e automação. Duração de 5 anos.'},
+{name:'Engenharia Metalúrgica',area:7,desc:'O Bacharelado em Engenharia Metalúrgica forma profissionais para atuar no desenvolvimento e aprimoramento de materiais metálicos e na gestão dos processos de produção e transformação dos metais. O curso abrange termodinâmica dos materiais, metalurgia extrativa, fundição, soldagem, materiais e processos de fabricação, propriedades dos metais, controle de qualidade e processos industriais. O objetivo é preparar os alunos para otimizar processos metalúrgicos em indústrias automotiva, aeroespacial e de construção civil. Duração de 5 anos.'},
+{name:'Engenharia Naval',area:7,desc:'O Bacharelado em Engenharia Naval forma profissionais para projetar, desenvolver e gerenciar embarcações e estruturas marítimas, com foco em segurança, sustentabilidade e inovação. O curso abrange hidrodinâmica, estruturas navais, mecânica dos fluidos, materiais, sistemas de propulsão, transporte marítimo, construção e manutenção de navios. O objetivo é preparar os alunos para trabalhar no desenvolvimento de embarcações, plataformas offshore e sistemas de transporte marítimo. Duração de 5 anos.'},
+{name:'Engenharia Nuclear',area:7,desc:'O Bacharelado em Engenharia Nuclear forma profissionais para atuar no desenvolvimento, operação e manutenção de sistemas e tecnologias nucleares, com foco em segurança, eficiência e sustentabilidade. O curso abrange física nuclear, termodinâmica, reatores nucleares, radioproteção, controle de processos, instrumentação nuclear, física de partículas e gestão de resíduos radioativos. O objetivo é preparar os alunos para trabalhar em geração de energia nuclear, medicina nuclear e pesquisa científica. Duração de 5 anos.'},
+{name:'Engenharia Química',area:7,desc:'O Bacharelado em Engenharia Química forma profissionais para atuar no desenvolvimento, otimização e gerenciamento de processos industriais que envolvem transformações químicas, físicas e biológicas. O curso abrange química geral, termodinâmica, processos de separação, reatores químicos, controle de processos, segurança industrial, cinética química e engenharia de materiais. O objetivo é preparar os alunos para trabalhar em setores petroquímico, farmacêutico, alimentício, energético e ambiental. Duração de 5 anos.'},
+{name:'Engenharia Têxtil',area:7,desc:'O Bacharelado em Engenharia Têxtil forma profissionais para atuar na indústria têxtil, desenvolvendo, otimizando e gerenciando processos de produção de fibras, tecidos e produtos têxteis. O curso abrange química dos materiais têxteis, processos de fiação, tecelagem, tingimento, acabamento, controle de qualidade, design de produtos têxteis, sustentabilidade e gestão de processos industriais. O objetivo é preparar os alunos para inovar na criação e produção de tecidos, desenvolvendo soluções eficientes e sustentáveis. Duração de 4 a 5 anos.'},
+];
+
+// ===== STATE =====
+let curIdx = 0;
+const ratings = {};
+
+// ===== START =====
+function iniciarAvaliacao() {
+  document.getElementById('screen-start').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'flex';
+  buildStarBtns();
+  showCourse(0);
+}
+
+// ===== BUILD STAR BUTTONS (5 estrelas) =====
+function buildStarBtns() {
+  const c = document.getElementById('rating-btns');
+  c.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const b = document.createElement('button');
+    b.className = 'star-btn';
+    b.id = 'sb' + i;
+    b.textContent = '★';
+    b.setAttribute('aria-label', i + ' estrela' + (i > 1 ? 's' : ''));
+    b.onclick = (function(v){ return function(){ setRating(v); }; })(i);
+    b.onmouseenter = (function(v){ return function(){ hoverStars(v); }; })(i);
+    b.onmouseleave = function(){ refreshStars(ratings[COURSES[curIdx].name] || 0); };
+    c.appendChild(b);
+  }
+}
+
+// ===== SHOW COURSE =====
+function showCourse(idx) {
+  curIdx = idx;
+  const c = COURSES[idx];
+  const area = AREAS[c.area];
+
+  // Badge
+  const badge = document.getElementById('area-badge');
+  badge.textContent = area.icon + ' ÁREA ' + (c.area + 1) + ' · ' + area.name;
+  badge.style.backgroundColor = area.color + '22';
+  badge.style.color = area.color;
+  badge.style.borderColor = area.color + '44';
+
+  // Progress
+  document.getElementById('prog-cur').textContent = idx + 1;
+  document.getElementById('prog-tot').textContent = COURSES.length;
+  const bar = document.getElementById('prog-bar');
+  bar.style.width = ((idx + 1) / COURSES.length * 100) + '%';
+  bar.style.backgroundColor = area.color;
+
+  // Content
+  document.getElementById('course-name').textContent = c.name;
+  document.getElementById('course-desc').textContent = c.desc;
+
+  // Stars
+  refreshStars(ratings[c.name] || 0);
+
+}
+
+// ===== STAR HELPERS =====
+function refreshStars(val) {
+  const areaColor = AREAS[COURSES[curIdx].area].color;
+  for (let i = 1; i <= 5; i++) {
+    const b = document.getElementById('sb' + i);
+    if (!b) continue;
+    b.className = 'star-btn' + (i <= val ? ' on' : '');
+    b.style.color = i <= val ? areaColor : '';
+  }
+}
+
+function hoverStars(val) {
+  const areaColor = AREAS[COURSES[curIdx].area].color;
+  for (let i = 1; i <= 5; i++) {
+    const b = document.getElementById('sb' + i);
+    if (!b) continue;
+    b.style.color = i <= val ? areaColor : '#3a3858';
+  }
+}
+
+// ===== RATING =====
+function setRating(r) {
+  ratings[COURSES[curIdx].name] = r;
+  autoSave();
+  refreshStars(r);
+  // Auto-avança após breve delay para o participante ver a seleção
+  setTimeout(function() {
+    if (curIdx < COURSES.length - 1) showCourse(curIdx + 1);
+    else showResults();
+  }, 350);
+}
+
+// Keyboard shortcuts (1-5)
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('screen-quiz').style.display === 'none') return;
+  if (e.key >= '1' && e.key <= '5') {
+    setRating(parseInt(e.key));
+  }
+});
+
+// ===== RESULTS =====
+function showResults() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'block';
+  renderRanking();
+}
+
+function renderRanking() {
+  const sorted = COURSES
+    .filter(function(c){ return c.name in ratings; })
+    .map(function(c){ return { name: c.name, areaIdx: c.area, area: AREAS[c.area].name, stars: ratings[c.name] || 0 }; })
+    .sort(function(a, b){
+      if (b.stars !== a.stars) return b.stars - a.stars;
+      return a.name.localeCompare(b.name);
+    });
+
+  const total = Object.keys(ratings).length;
+  document.getElementById('results-summary').textContent =
+    total + ' de ' + COURSES.length + ' cursos avaliados';
+
+  const medals = ['🥇','🥈','🥉'];
+  const container = document.getElementById('ranking-list');
+  container.innerHTML = '';
+
+  sorted.forEach(function(c, i) {
+    const pos = i + 1;
+    const item = document.createElement('div');
+    item.className = 'ranking-item' + (pos <= 3 ? ' top' + pos : '');
+
+    const medalOrNum = pos <= 3
+      ? '<div class="ranking-medal">' + medals[pos - 1] + '</div>'
+      : '<div class="ranking-pos">' + pos + '.</div>';
+
+    const starsHtml = [1,2,3,4,5].map(function(s){
+      return '<span class="ranking-star' + (s <= c.stars ? ' on' : '') + '">★</span>';
+    }).join('');
+
+    item.innerHTML = medalOrNum
+      + '<div class="ranking-info">'
+      +   '<div class="ranking-name">' + c.name + '</div>'
+      +   '<div class="ranking-area">' + c.area + '</div>'
+      + '</div>'
+      + '<div class="ranking-stars">' + starsHtml
+      +   '<span class="ranking-score">(' + c.stars + '/5)</span>'
+      + '</div>';
+    container.appendChild(item);
+  });
+}
+
+// ===== SAVE =====
+// ── AUTOSAVE / RETOMAR ────────────────────────────────────────────────────────
+function autoSave() {
+  try {
+    const state = { curIdx, ratings, ts: Date.now() };
+    localStorage.setItem('cslb-autosave', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function restoreGame(state) {
+  curIdx = state.curIdx || 0;
+  Object.assign(ratings, state.ratings || {});
+  document.getElementById('screen-start').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'flex';
+  buildStarBtns();
+  showCourse(curIdx);
+}
+
+function resumeGame() {
+  try {
+    const saved = localStorage.getItem('cslb-autosave');
+    if (saved) restoreGame(JSON.parse(saved));
+  } catch(e) { iniciarAvaliacao(); }
+}
+
+window.addEventListener('load', function() {
+  try {
+    const saved = localStorage.getItem('cslb-autosave');
+    if (!saved) return;
+    const state = JSON.parse(saved);
+    if (state.curIdx == null) return;
+    const pct = Math.round((state.curIdx / 149) * 100);
+    const btn = document.getElementById('btn-resume');
+    if (btn) {
+      btn.style.display = 'block';
+      btn.textContent = '↩ Retomar (' + pct + '% — ' + state.curIdx + '/149 cursos)';
+    }
+  } catch(e) {}
+});
+
+function salvarJogo() {
+  const allCourses = COURSES
+    .filter(function(c){ return c.name in ratings; })
+    .map(function(c){ return { name: c.name, area: AREAS[c.area].name, stars: ratings[c.name] || 0 }; })
+    .sort(function(a, b){ return b.stars - a.stars; });
+
+  var scores = {
+    ratings: ratings,
+    allCourses: allCourses,
+    topCourses: allCourses.slice(0, 10),
+    totalRated: Object.keys(ratings).length,
+    totalCourses: COURSES.length
+  };
+
+  try { localStorage.removeItem('cslb-autosave'); } catch(e) {}
+  try { window.parent.postMessage({ type: 'game-complete', scores: scores }, '*'); } catch(e) {}
+}
+</script>
+</body>
+</html>

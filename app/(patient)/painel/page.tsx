@@ -7,7 +7,7 @@ import {
   Lock, CheckCircle2, Circle, PlayCircle, ArrowRight,
   Compass, Swords, Brain, Target, Star, Grid3x3,
   FlaskConical, Heart, Users, MessageSquare, Palette,
-  Cpu, Wrench, Trophy
+  Cpu, Wrench, Trophy, GraduationCap
 } from 'lucide-react'
 import type { Experience, PatientExperience, Patient } from '@/types/database'
 import PathSelector from './PathSelector'
@@ -16,6 +16,7 @@ const experienceIcons: Record<number, React.ElementType> = {
   0: Compass, 1: Swords, 2: Brain, 3: Target, 4: Star,
   5: Grid3x3, 6: FlaskConical, 7: Heart, 8: Users,
   9: MessageSquare, 10: Palette, 11: Cpu, 12: Wrench, 13: Trophy,
+  14: GraduationCap,
 }
 
 const statusConfig = {
