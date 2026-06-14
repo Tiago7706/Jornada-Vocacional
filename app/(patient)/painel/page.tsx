@@ -23,6 +23,18 @@ const coverImages: Record<number, string> = {
   13: '/images/cover-cst.webp',
   0:  '/images/cover-jornada.png',
   14: '/images/cover-cslb.png',
+  1:  '/images/cover-riasec-battle-cards.png',
+  2:  '/images/cover-decifra-mente.png',
+  3:  '/images/cover-agencia-missao-impossivel.png',
+  4:  '/images/cover-super-quem.png',
+  5:  '/images/cover-jogo-da-memoria.png',
+  6:  '/images/cover-expedicao-cientifica.png',
+  7:  '/images/cover-hq-da-saude.png',
+  8:  '/images/cover-face-a-face.png',
+  9:  '/images/cover-quem-fala-isso.png',
+  10: '/images/cover-uma-noite-no-museu.png',
+  11: '/images/cover-inside-exe.png',
+  12: '/images/cover-engenhoso.png',
 }
 
 const statusConfig = {
