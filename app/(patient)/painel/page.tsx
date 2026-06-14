@@ -20,7 +20,7 @@ const experienceIcons: Record<number, React.ElementType> = {
 }
 
 const coverImages: Record<number, string> = {
-  13: '/images/cover-cst.webp',
+  13: '/images/cover-cst.png',
   0:  '/images/cover-jornada.png',
   14: '/images/cover-cslb.png',
   1:  '/images/cover-riasec-battle-cards.png',
