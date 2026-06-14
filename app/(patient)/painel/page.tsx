@@ -149,7 +149,7 @@ export default async function PatientPainelPage() {
               </CardHeader>
               <CardContent>
                 {isAccessible && status !== 'completed' ? (
-                  <a href={`/experiencia/${exp.slug}`} className="inline-flex items-center justify-center gap-2 rounded-md bg-primary text-primary-foreground text-sm font-medium px-3 py-1.5 w-full hover:bg-primary/90 transition-colors">
+                  <a href={`/experiencia/${exp.slug}`} className="inline-flex items-center justify-center gap-2 rounded-md bg-[#1e88e5] text-white text-sm font-medium px-3 py-1.5 w-full hover:bg-[#1976d2] transition-colors">
                     {status === 'in_progress' ? 'Continuar' : 'Iniciar'}
                     <ArrowRight className="h-4 w-4" />
                   </a>
