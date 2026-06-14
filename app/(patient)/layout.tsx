@@ -15,7 +15,7 @@ export default async function PatientLayout({
   if (user.user_metadata?.role === 'admin') redirect('/admin/painel')
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundImage: "url('/images/bg-painel.png')", backgroundSize: 'cover', backgroundPosition: 'top center', backgroundAttachment: 'fixed' }}>
       <header className="border-b">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
