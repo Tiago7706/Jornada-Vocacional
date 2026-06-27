@@ -44,7 +44,8 @@ function IframeGame({
         left: 0,
         right: 0,
         bottom: 0,
-        width: '100%',
+        width: '100vw',
+        height: 'calc(100dvh - 56px)',
         border: 'none',
         zIndex: 40,
       }}
