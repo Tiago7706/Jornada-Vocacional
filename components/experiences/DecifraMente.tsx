@@ -364,7 +364,7 @@ export default function DecifraMente({ initialState, onStateChange, onComplete }
   // ── Title ──────────────────────────────────────────────────────────────────
   function renderTitle() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', minHeight: '100vh', padding: '2rem 1.5rem 3rem', gap: 16 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', minHeight: 'calc(100svh - 56px)', padding: '2rem 1.5rem 2rem', gap: 16 }}>
         {renderStars()}
         {/* Logo */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
@@ -384,7 +384,7 @@ export default function DecifraMente({ initialState, onStateChange, onComplete }
   // ── Avatar ─────────────────────────────────────────────────────────────────
   function renderAvatar() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', padding: '2rem 1.5rem', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100svh - 56px)', padding: '2rem 1.5rem', gap: 20 }}>
         {renderStars()}
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 9, color: '#FFD700', marginBottom: 4 }}>ESCOLHA SEU AVATAR</div>
@@ -422,7 +422,7 @@ export default function DecifraMente({ initialState, onStateChange, onComplete }
       { icon: '⏱️', title: 'Tempo estimado: 5 minutos', text: 'Faça com calma e sem pressa. A autenticidade nas respostas é o que gera um resultado significativo.' },
     ]
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100svh - 56px)' }}>
         {renderStars()}
         <div style={{ padding: '1rem 1.25rem .75rem', borderBottom: '1px solid rgba(255,215,0,.15)', flexShrink: 0 }}>
           <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 9, color: '#FFD700', marginBottom: 4 }}>COMO JOGAR</div>
@@ -454,7 +454,7 @@ export default function DecifraMente({ initialState, onStateChange, onComplete }
     const progress = (answered / totalQ) * 100
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', padding: '1rem 1.25rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100svh - 56px)', padding: '1rem 1.25rem' }}>
         {renderStars()}
 
         {/* Transition overlay */}

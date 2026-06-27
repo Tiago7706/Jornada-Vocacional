@@ -30,7 +30,7 @@
   max-width: 430px;
   margin: 0 auto;
   background: #0a0a14;
-  min-height: 100vh;
+  min-height: calc(100svh - 56px);
   position: relative;
   font-family: 'Inter', sans-serif;
   color: #fff;
@@ -263,7 +263,7 @@
 /* ── Result screen ───────────────────────────────────────────────────────────── */
 .resultRoot {
   background: #fff;
-  min-height: 100vh;
+  min-height: calc(100svh - 56px);
   font-family: 'Inter', sans-serif;
   color: #111;
 }
