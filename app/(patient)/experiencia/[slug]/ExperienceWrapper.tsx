@@ -13,12 +13,16 @@ function IframeGame({
   onComplete,
   onSave,
   onExit,
+  completedScores,
 }: {
   src: string
   onComplete: (scores: Record<string, unknown>, responses: Record<string, unknown>) => void
   onSave?: (scores: Record<string, unknown>) => void
   onExit?: () => void
+  completedScores?: Record<string, unknown>
 }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
       if (event.data?.type === 'game-complete') {
@@ -35,8 +39,21 @@ function IframeGame({
     return () => window.removeEventListener('message', handleMessage)
   }, [onComplete, onSave, onExit])
 
+  // Send saved scores to iframe after it loads (cross-device results recovery)
+  useEffect(() => {
+    if (!completedScores) return
+    const iframe = iframeRef.current
+    if (!iframe) return
+    function handleLoad() {
+      iframe.contentWindow?.postMessage({ type: 'restore-completed', scores: completedScores }, '*')
+    }
+    iframe.addEventListener('load', handleLoad)
+    return () => iframe.removeEventListener('load', handleLoad)
+  }, [completedScores])
+
   return (
     <iframe
+      ref={iframeRef}
       src={src}
       style={{
         position: 'fixed',
@@ -169,6 +186,19 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
     }
   }, [])
 
+  // ── CSLB: always show iframe (even when completed) so user can view results ──
+  if (experience.slug === 'avaliacao-cslb') {
+    return (
+      <IframeGame
+        src="/games/avaliacao-cslb.html"
+        onComplete={handleComplete}
+        onSave={handleSilentSave}
+        onExit={handleExit}
+        completedScores={isCompleted ? initialState : undefined}
+      />
+    )
+  }
+
   if (isCompleted) {
     return (
       <div className="text-center py-12 space-y-4">
@@ -263,10 +293,6 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
 
   if (experience.slug === 'desafio-cst-final') {
     return <IframeGame src="/games/desafio-cst-final.html?v=3" onComplete={handleComplete} onExit={handleExit} />
-  }
-
-  if (experience.slug === 'avaliacao-cslb') {
-    return <IframeGame src="/games/avaliacao-cslb.html" onComplete={handleComplete} onExit={handleExit} />
   }
 
   // Fallback placeholder for games not yet migrated

@@ -437,6 +437,7 @@ const ratings = {};
 
 // ===== START =====
 function iniciarAvaliacao() {
+  try { localStorage.removeItem('cslb-completed'); } catch(e) {}
   document.getElementById('screen-start').style.display = 'none';
   document.getElementById('screen-quiz').style.display = 'flex';
   buildStarBtns();
@@ -534,6 +535,13 @@ function showResults() {
   document.getElementById('screen-quiz').style.display = 'none';
   document.getElementById('screen-results').style.display = 'block';
   renderRanking();
+  // Persist so page reload goes straight to results (not back to start)
+  try {
+    localStorage.setItem('cslb-completed', JSON.stringify({ ratings: ratings, ts: Date.now() }));
+    localStorage.removeItem('cslb-autosave');
+  } catch(e) {}
+  // Silent save to parent — marks as completed in DB without navigating away
+  try { window.parent.postMessage({ type: 'game-save', scores: buildScores() }, '*'); } catch(e) {}
 }
 
 function renderRanking() {
@@ -587,6 +595,31 @@ function autoSave() {
   } catch(e) {}
 }
 
+function buildScores() {
+  const allCourses = COURSES
+    .filter(function(c){ return c.name in ratings; })
+    .map(function(c){ return { name: c.name, area: AREAS[c.area].name, stars: ratings[c.name] || 0 }; })
+    .sort(function(a, b){ return b.stars - a.stars; });
+  return {
+    ratings: ratings,
+    allCourses: allCourses,
+    topCourses: allCourses.slice(0, 10),
+    totalRated: Object.keys(ratings).length,
+    totalCourses: COURSES.length
+  };
+}
+
+function showCompletedResults(savedRatings) {
+  ratings = {};
+  Object.assign(ratings, savedRatings || {});
+  document.getElementById('screen-start').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'none';
+  document.getElementById('screen-results').style.display = 'block';
+  renderRanking();
+  document.getElementById('results-summary').textContent =
+    Object.keys(ratings).length + ' de ' + COURSES.length + ' cursos avaliados';
+}
+
 function restoreGame(state) {
   curIdx = state.curIdx || 0;
   Object.assign(ratings, state.ratings || {});
@@ -603,7 +636,29 @@ function resumeGame() {
   } catch(e) { iniciarAvaliacao(); }
 }
 
+// Receive completed scores from parent app (cross-device recovery)
+window.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'restore-completed' && event.data.scores) {
+    var s = event.data.scores;
+    showCompletedResults(s.ratings || {});
+    try { localStorage.setItem('cslb-completed', JSON.stringify({ ratings: s.ratings, ts: Date.now() })); } catch(e) {}
+  }
+});
+
 window.addEventListener('load', function() {
+  // 1. Check for completed state first (page reload after finishing)
+  try {
+    const completed = localStorage.getItem('cslb-completed');
+    if (completed) {
+      const state = JSON.parse(completed);
+      if (state.ratings && Object.keys(state.ratings).length > 0) {
+        showCompletedResults(state.ratings);
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // 2. Check for midgame autosave
   try {
     const saved = localStorage.getItem('cslb-autosave');
     if (!saved) return;
@@ -619,20 +674,9 @@ window.addEventListener('load', function() {
 });
 
 function salvarJogo() {
-  const allCourses = COURSES
-    .filter(function(c){ return c.name in ratings; })
-    .map(function(c){ return { name: c.name, area: AREAS[c.area].name, stars: ratings[c.name] || 0 }; })
-    .sort(function(a, b){ return b.stars - a.stars; });
-
-  var scores = {
-    ratings: ratings,
-    allCourses: allCourses,
-    topCourses: allCourses.slice(0, 10),
-    totalRated: Object.keys(ratings).length,
-    totalCourses: COURSES.length
-  };
-
+  var scores = buildScores();
   try { localStorage.removeItem('cslb-autosave'); } catch(e) {}
+  // Keep cslb-completed so user can view results if they come back
   try { window.parent.postMessage({ type: 'game-complete', scores: scores }, '*'); } catch(e) {}
 }
 </script>

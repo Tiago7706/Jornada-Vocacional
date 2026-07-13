@@ -40,13 +40,25 @@ export default async function ExperiencePage({ params }: { params: Promise<{ slu
     redirect('/painel')
   }
 
+  // When completed, fetch saved scores so the experience can show results (e.g. CSLB ranking)
+  let completedScores: Record<string, unknown> | null = null
+  if (status === 'completed') {
+    const { data: scoreRow } = await supabase
+      .from('experience_scores')
+      .select('scores')
+      .eq('patient_id', user.id)
+      .eq('experience_id', experience.id)
+      .single()
+    completedScores = (scoreRow?.scores as Record<string, unknown>) ?? null
+  }
+
   return (
     <div style={{ background: '#f5f5f5', minHeight: 'calc(100svh - 56px)', margin: '-2rem -1rem -2rem' }}>
       <div style={{ maxWidth: 430, margin: '0 auto', background: '#fff', minHeight: 'calc(100svh - 56px)', position: 'relative' }}>
         <ExperienceWrapper
           experience={experience}
           patientId={user.id}
-          initialState={pe?.game_state ?? undefined}
+          initialState={completedScores ?? pe?.game_state ?? undefined}
           isCompleted={status === 'completed'}
         />
       </div>
