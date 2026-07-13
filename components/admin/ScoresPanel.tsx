@@ -19,6 +19,7 @@ type DisplayMode =
   | 'value-bars'
   | 'course-stars'
   | 'pontos-stars'
+  | 'cslb-ranking'
 
 const DISPLAY_MODE: Record<number, DisplayMode> = {
   1:  'riasec',
@@ -33,6 +34,7 @@ const DISPLAY_MODE: Record<number, DisplayMode> = {
   10: 'pontos-stars',
   11: 'course-stars',
   12: 'course-stars',
+  14: 'cslb-ranking',
 }
 
 const RIASEC_META: Record<string, { label: string; color: string }> = {
@@ -204,6 +206,68 @@ function PontosStarsDisplay({ scores }: { scores: Record<string, unknown> }) {
   )
 }
 
+function CslbRankingDisplay({ scores }: { scores: Record<string, unknown> }) {
+  type CourseRow = { name: string; area: string; stars: number }
+  const allCourses = scores.allCourses as CourseRow[] | undefined
+  const ratings    = scores.ratings    as Record<string, number> | undefined
+  const totalRated   = Number(scores.totalRated   ?? Object.keys(ratings ?? {}).length)
+  const totalCourses = Number(scores.totalCourses ?? 149)
+
+  const courses: CourseRow[] = allCourses?.length
+    ? allCourses
+    : ratings
+      ? Object.entries(ratings)
+          .map(([name, stars]) => ({ name, area: '', stars }))
+          .sort((a, b) => b.stars - a.stars)
+      : []
+
+  if (courses.length === 0) return (
+    <p className="text-sm text-muted-foreground py-2">
+      Dados do CSLB não disponíveis. O participante precisará refazer a avaliação.
+    </p>
+  )
+
+  const byStars = [5,4,3,2,1].map(s => ({ s, n: courses.filter(c => c.stars === s).length }))
+
+  return (
+    <div className="space-y-3">
+      {/* resumo */}
+      <div className="flex flex-wrap items-center gap-4 text-sm">
+        <span className="font-medium">{totalRated}/{totalCourses} cursos avaliados</span>
+        <span className="flex gap-3">
+          {byStars.filter(x => x.n > 0).map(({ s, n }) => (
+            <span key={s} className="text-xs text-muted-foreground">
+              {'★'.repeat(s)}: <strong>{n}</strong>
+            </span>
+          ))}
+        </span>
+      </div>
+
+      {/* ranking completo */}
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Ranking completo ({courses.length} cursos)
+      </div>
+      <div className="divide-y divide-gray-100 max-h-[420px] overflow-y-auto rounded border">
+        {courses.map((c, i) => (
+          <div key={c.name} className="flex items-center justify-between px-3 py-1.5 text-sm">
+            <div className="min-w-0 flex-1 flex items-baseline gap-1.5">
+              <span className="text-xs text-muted-foreground w-6 shrink-0 text-right">{i + 1}.</span>
+              <span className="truncate">{c.name}</span>
+              {c.area && (
+                <span className="hidden sm:inline text-xs text-muted-foreground shrink-0">· {c.area}</span>
+              )}
+            </div>
+            <span className="shrink-0 ml-3 text-amber-400 font-mono text-xs">
+              {'★'.repeat(c.stars)}{'☆'.repeat(Math.max(0, 5 - c.stars))}
+              <span className="text-muted-foreground ml-1">({c.stars}/5)</span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ─── Card colapsável por jogo ───────────────────────────────── */
 function ScoreCard({ entry }: { entry: ScoreEntry }) {
   const [open, setOpen] = useState(false)
@@ -229,12 +293,13 @@ function ScoreCard({ entry }: { entry: ScoreEntry }) {
 
       {open && (
         <div className="px-4 pb-4 pt-2 border-t bg-muted/20">
-          {mode === 'riasec'       && <RiasecDisplay    scores={entry.scores} />}
-          {mode === 'personality'  && <PersonalityDisplay scores={entry.scores} />}
-          {mode === 'area-bars'    && <AreaBarsDisplay   scores={entry.scores} />}
-          {mode === 'value-bars'   && <ValueBarsDisplay  scores={entry.scores} />}
-          {mode === 'course-stars' && <CourseStarsDisplay scores={entry.scores} />}
-          {mode === 'pontos-stars' && <PontosStarsDisplay scores={entry.scores} />}
+          {mode === 'riasec'        && <RiasecDisplay      scores={entry.scores} />}
+          {mode === 'personality'   && <PersonalityDisplay scores={entry.scores} />}
+          {mode === 'area-bars'     && <AreaBarsDisplay    scores={entry.scores} />}
+          {mode === 'value-bars'    && <ValueBarsDisplay   scores={entry.scores} />}
+          {mode === 'course-stars'  && <CourseStarsDisplay scores={entry.scores} />}
+          {mode === 'pontos-stars'  && <PontosStarsDisplay scores={entry.scores} />}
+          {mode === 'cslb-ranking'  && <CslbRankingDisplay scores={entry.scores} />}
         </div>
       )}
     </div>
