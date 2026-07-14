@@ -415,20 +415,20 @@ function ScoreCard({ entry }: { entry: ScoreEntry }) {
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium hover:bg-muted/50 transition-colors"
-      >
-        <span className="flex items-center gap-2">
+      <div className="flex items-center">
+        <button
+          onClick={() => setOpen(o => !o)}
+          className="flex-1 flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-muted/50 transition-colors cursor-pointer text-left"
+        >
           {open
-            ? <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+            ? <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+            : <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />}
           {entry.experience_title}
-        </span>
-        <Badge variant="outline" className="text-xs text-green-600 border-green-300">
+        </button>
+        <Badge variant="outline" className="text-xs text-green-600 border-green-300 mr-4 shrink-0">
           concluído
         </Badge>
-      </button>
+      </div>
 
       {open && (
         <div className="px-4 pb-4 pt-2 border-t bg-muted/20">
