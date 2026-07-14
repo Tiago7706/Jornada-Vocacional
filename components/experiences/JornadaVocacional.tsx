@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { GameProps } from '@/types/database'
 
@@ -313,8 +313,13 @@ const ILL_STYLES: Record<string, CSSProperties & { emoji: string }> = {
 export default function JornadaVocacional({ patientId, experienceId, initialState, onStateChange, onComplete }: GameProps) {
   const savedState = initialState as Partial<GameState> | undefined
 
+  // When initialState is the already-computed results (source=JORNADA_130_V3), skip to finish
+  const completedResults = (initialState as Record<string,unknown>)?.source === 'JORNADA_130_V3'
+    ? initialState as Record<string,unknown>
+    : null
+
   const [phase, setPhase] = useState<'cover'|'scenes'|'finish'>(
-    savedState?.phase ?? 'cover'
+    completedResults ? 'finish' : (savedState?.phase ?? 'cover')
   )
   const [scene, setScene] = useState(savedState?.scene ?? 0)
   const [choices, setChoices] = useState<Record<string,string>>(savedState?.choices ?? {})
@@ -322,7 +327,6 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
   const [transition, setTransition] = useState<{icon:string;msg:string}|null>(null)
   const [selected, setSelected] = useState<string|null>(null)
   const [animKey, setAnimKey] = useState(0)
-  const saveTimer = useRef<NodeJS.Timeout|null>(null)
 
   const PAUSE_AT: Record<number, {icon:string;msg:string}> = {
     29: { icon:'🌟', msg:'Holland concluído! Agora: Tipo Psicológico MBTI...' },
@@ -338,8 +342,7 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
   }, [scene]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const triggerSave = useCallback((state: GameState) => {
-    if (saveTimer.current) clearTimeout(saveTimer.current)
-    saveTimer.current = setTimeout(() => onStateChange(state as Record<string,unknown>), 1500)
+    onStateChange(state as Record<string,unknown>)
   }, [onStateChange])
 
   function handleSelect(opt: SceneOpt) {
@@ -448,7 +451,15 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
   // ── Finish ─────────────────────────────────────────────────────────────────
 
   if (phase === 'finish') {
-    const results = computeResults(scores)
+    const results = completedResults
+      ? {
+          holland:     completedResults.holland     as Record<string,number>,
+          hollandCode: completedResults.hollandCode as string,
+          mbti:        completedResults.mbti        as { type: string; scores: Record<string,number> },
+          valores:     completedResults.valores     as Record<string,number>,
+          bandura:     completedResults.bandura     as Record<string,number>,
+        }
+      : computeResults(scores)
     const hNames: Record<string,string> = { R:'Realista', I:'Investigativo', A:'Artístico', S:'Social', E:'Empreendedor', C:'Convencional' }
     const hColors: Record<string,string> = { R:'#f97316', I:'#3b82f6', A:'#a855f7', S:'#22c55e', E:'#f59e0b', C:'#06b6d4' }
     const vNames: Record<string,string> = { Seg:'Segurança',Cri:'Criatividade',Alt:'Altruísmo',Est:'Estética',Var:'Variedade',Est_I:'Est. Intelectual',Pre:'Prestígio',Equ:'Equilíbrio',Des:'Desenvolvimento',Ges:'Gestão',Ind:'Independência',Ret:'Ret. Econômico',Rel:'Relacionamentos',Pro:'Progressão',Amb:'Ambiente' }

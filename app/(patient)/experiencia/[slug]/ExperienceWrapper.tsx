@@ -199,6 +199,19 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
     )
   }
 
+  // ── Jornada Vocacional: always render component (even when completed) so finish screen shows ──
+  if (experience.slug === 'jornada-vocacional' || experience.slug === 'jornada-vocacional-v5') {
+    return (
+      <JornadaVocacional
+        patientId={patientId}
+        experienceId={experience.id}
+        initialState={initialState}
+        onStateChange={handleStateChange}
+        onComplete={handleComplete}
+      />
+    )
+  }
+
   if (isCompleted) {
     return (
       <div className="text-center py-12 space-y-4">
@@ -277,18 +290,6 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
 
   if (experience.slug === 'engenhoso') {
     return <IframeGame src="/games/engenhoso.html?v=4" onComplete={handleComplete} onExit={handleExit} />
-  }
-
-  if (experience.slug === 'jornada-vocacional' || experience.slug === 'jornada-vocacional-v5') {
-    return (
-      <JornadaVocacional
-        patientId={patientId}
-        experienceId={experience.id}
-        initialState={initialState}
-        onStateChange={handleStateChange}
-        onComplete={handleComplete}
-      />
-    )
   }
 
   if (experience.slug === 'desafio-cst-final') {
