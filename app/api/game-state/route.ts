@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Nao autorizado.' }, { status: 401 })
 
   const experienceId = req.nextUrl.searchParams.get('experienceId')
-  if (!experienceId) return NextResponse.json({ error: 'experienceId obrigatorio.' }, { status: 400 })
+  if (experienceId === null) return NextResponse.json({ error: 'experienceId obrigatorio.' }, { status: 400 })
 
   const { data } = await supabase
     .from('patient_experiences')
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { experienceId, game_state, status, scores, responses } = body
 
-  if (!experienceId) return NextResponse.json({ error: 'experienceId obrigatorio.' }, { status: 400 })
+  if (experienceId === undefined || experienceId === null) return NextResponse.json({ error: 'experienceId obrigatorio.' }, { status: 400 })
 
   const isCompleted = status === 'completed'
 
