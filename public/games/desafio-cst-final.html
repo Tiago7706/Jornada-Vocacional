@@ -1054,9 +1054,9 @@
     <div class="area-breakdown-title">📊 Desempenho por Área</div>
   </div>
 
-  <!-- Botão Salvar -->
-  <button class="btn-whatsapp" onclick="salvarJogo()" style="background:#c9a84c;box-shadow:none;">
-    &#10004; SALVAR JOGO
+  <!-- Botão Fechar -->
+  <button class="btn-whatsapp" onclick="fecharJogo()" style="background:#7c3aed;box-shadow:none;">
+    ✕ Fechar
   </button>
 
 </div>
@@ -1783,6 +1783,10 @@ function showEnd() {
 
   buildAreaBreakdown();
   buildRanking();
+
+  // Auto-save silently when results screen appears — participant doesn't need to click anything
+  try { localStorage.removeItem('cst-autosave'); } catch(e) {}
+  try { window.parent.postMessage({ type: 'game-save', scores: buildScores() }, '*'); } catch(e) {}
 }
 
 function buildRanking() {
@@ -1890,17 +1894,14 @@ window.addEventListener('load', function() {
   } catch(e) {}
 });
 
-function salvarJogo() {
+function buildScores() {
   const total = correct + wrong;
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-  // Todos os cursos avaliados (ratings preenchidos), com área, ordenados por estrelas desc
   const allCourses = COURSES
     .filter(function(c){ return c.name in ratings; })
     .map(function(c){ return { name: c.name, area: c.area, stars: ratings[c.name] || 0 }; })
     .sort(function(a, b){ return b.stars - a.stars; });
-
-  const scores = {
+  return {
     correct: correct,
     wrong: wrong,
     total: total,
@@ -1910,8 +1911,10 @@ function salvarJogo() {
     allCourses: allCourses,
     topCourses: allCourses.slice(0, 10)
   };
-  try { localStorage.removeItem('cst-autosave'); } catch(e) {}
-  try { window.parent.postMessage({ type: 'game-complete', scores: scores }, '*'); } catch(e) {}
+}
+
+function fecharJogo() {
+  try { window.parent.postMessage({ type: 'game-exit' }, '*'); } catch(e) {}
 }
 
 function sendWhatsApp() {

@@ -180,6 +180,26 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
     }
   }, [experience.id, router])
 
+  // onCompleteNoNav: save scores silently without navigating (used by JV — finish screen stays visible)
+  const handleCompleteNoNav = useCallback(async (
+    scores: Record<string, unknown>,
+    responses: Record<string, unknown>
+  ) => {
+    try {
+      await fetch('/api/game-state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          experienceId: experience.id,
+          game_state: {},
+          status: 'completed',
+          scores,
+          responses,
+        }),
+      })
+    } catch { /* silently ignore — finish screen stays open */ }
+  }, [experience.id])
+
   useEffect(() => {
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current)
@@ -207,7 +227,8 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
         experienceId={experience.id}
         initialState={initialState}
         onStateChange={handleStateChange}
-        onComplete={handleComplete}
+        onComplete={handleCompleteNoNav}
+        onExit={handleExit}
       />
     )
   }
@@ -293,7 +314,7 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
   }
 
   if (experience.slug === 'desafio-cst-final') {
-    return <IframeGame src="/games/desafio-cst-final.html?v=3" onComplete={handleComplete} onExit={handleExit} />
+    return <IframeGame src="/games/desafio-cst-final.html?v=3" onComplete={handleComplete} onSave={handleSilentSave} onExit={handleExit} />
   }
 
   // Fallback placeholder for games not yet migrated

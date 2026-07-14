@@ -310,7 +310,7 @@ const ILL_STYLES: Record<string, CSSProperties & { emoji: string }> = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function JornadaVocacional({ patientId, experienceId, initialState, onStateChange, onComplete }: GameProps) {
+export default function JornadaVocacional({ patientId, experienceId, initialState, onStateChange, onComplete, onExit }: GameProps & { onExit?: () => void }) {
   const savedState = initialState as Partial<GameState> | undefined
 
   // When initialState is the already-computed results (source=JORNADA_130_V3), skip to finish
@@ -560,6 +560,15 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
               </div>
             ))}
           </Wrap>
+
+          {onExit && (
+            <button
+              onClick={onExit}
+              style={{ width:'100%', padding:'16px', borderRadius:12, border:'none', background:'linear-gradient(135deg,#7c3aed,#06b6d4)', color:'#fff', fontSize:16, fontWeight:700, cursor:'pointer', fontFamily:'inherit', marginTop:8 }}
+            >
+              Ir ao painel →
+            </button>
+          )}
         </div>
       </div>
     )
