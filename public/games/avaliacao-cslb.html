@@ -249,7 +249,7 @@ body::before {
     <div class="ranking-title">🏅 Ranking de Interesse pelos Cursos</div>
     <div id="ranking-list"></div>
   </div>
-  <button class="btn-salvar" onclick="salvarJogo()">✔ SALVAR JOGO</button>
+  <button class="btn-salvar" onclick="fecharJogo()">Ir ao painel →</button>
 </div>
 
 <script>
@@ -673,11 +673,8 @@ window.addEventListener('load', function() {
   } catch(e) {}
 });
 
-function salvarJogo() {
-  var scores = buildScores();
-  try { localStorage.removeItem('cslb-autosave'); } catch(e) {}
-  // Keep cslb-completed so user can view results if they come back
-  try { window.parent.postMessage({ type: 'game-complete', scores: scores }, '*'); } catch(e) {}
+function fecharJogo() {
+  try { window.parent.postMessage({ type: 'game-exit' }, '*'); } catch(e) {}
 }
 </script>
 </body>
