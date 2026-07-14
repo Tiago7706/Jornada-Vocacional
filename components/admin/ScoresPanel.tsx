@@ -267,15 +267,15 @@ function JVResultsDisplay({ scores }: { scores: Record<string, unknown> }) {
       )}
 
       {/* MBTI */}
-      {mbti && (
+      {mbti?.type && mbti?.scores && (
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
             MBTI — <span className="text-foreground font-bold">{mbti.type}</span>
           </p>
           <div className="space-y-0.5">
             {MBTI_PAIRS.map(([a, b]) => {
-              const va = mbti.scores[a] ?? 0
-              const vb = mbti.scores[b] ?? 0
+              const va = mbti.scores?.[a] ?? 0
+              const vb = mbti.scores?.[b] ?? 0
               const total = va + vb || 1
               const pctA = Math.round((va / total) * 100)
               return (
