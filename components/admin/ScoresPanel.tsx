@@ -23,7 +23,6 @@ type DisplayMode =
   | 'jv-results'
 
 const DISPLAY_MODE: Record<number, DisplayMode> = {
-  0:  'jv-results',
   1:  'riasec',
   2:  'personality',
   3:  'area-bars',

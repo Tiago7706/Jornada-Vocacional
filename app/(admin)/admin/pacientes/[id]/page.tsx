@@ -9,6 +9,8 @@ import UnlockControl from '@/components/admin/UnlockControl'
 import GenerateReportButton from './GenerateReportButton'
 import ScoresPanel from '@/components/admin/ScoresPanel'
 import CSTScoreCard from '@/components/admin/CSTScoreCard'
+import JVScoreCard from '@/components/admin/JVScoreCard'
+import CSLBScoreCard from '@/components/admin/CSLBScoreCard'
 import type { Patient, Experience, PatientExperience } from '@/types/database'
 
 interface CSTScores {
@@ -98,9 +100,12 @@ export default async function PatientDetailPage({
   const senha = process.env.PATIENT_DEFAULT_PASSWORD || 'Jornada@2025'
   const cstScores = cstScoreRow?.scores ?? null
 
-  // Monta entradas do ScoresPanel (todos exceto CST que tem card próprio)
+  const jvScoreRow   = allScores?.find(s => s.experience_id === 0)
+  const cslbScoreRow = allScores?.find(s => s.experience_id === 14)
+
+  // Monta entradas do ScoresPanel (exclui CST, JV e CSLB — cada um tem card próprio)
   const scorePanelEntries = (allScores ?? [])
-    .filter(s => s.experience_id !== 13)
+    .filter(s => s.experience_id !== 13 && s.experience_id !== 0 && s.experience_id !== 14)
     .sort((a, b) => a.experience_id - b.experience_id)
     .map(s => ({
       experience_id: s.experience_id,
@@ -250,6 +255,12 @@ export default async function PatientDetailPage({
 
       {/* Resultado Desafio CST */}
       {cstScores && <CSTScoreCard scores={cstScores} />}
+
+      {/* Resultado Jornada Vocacional */}
+      {jvScoreRow && <JVScoreCard scores={jvScoreRow.scores} />}
+
+      {/* Resultado Avaliação CSLB */}
+      {cslbScoreRow && <CSLBScoreCard scores={cslbScoreRow.scores} />}
 
       {/* Gerar relatorio */}
       <Card>
