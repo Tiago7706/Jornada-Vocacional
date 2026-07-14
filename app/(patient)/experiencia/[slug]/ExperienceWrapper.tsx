@@ -185,8 +185,13 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
     scores: Record<string, unknown>,
     responses: Record<string, unknown>
   ) => {
+    // Cancel pending auto-save so it doesn't overwrite completed status
+    if (autoSaveTimer.current) {
+      clearTimeout(autoSaveTimer.current)
+      autoSaveTimer.current = null
+    }
     try {
-      await fetch('/api/game-state', {
+      const res = await fetch('/api/game-state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -197,7 +202,8 @@ export default function ExperienceWrapper({ experience, patientId, initialState,
           responses,
         }),
       })
-    } catch { /* silently ignore — finish screen stays open */ }
+      if (!res.ok) toast.error('Erro ao salvar resultado. Tente novamente.')
+    } catch { toast.error('Erro ao salvar resultado. Tente novamente.') }
   }, [experience.id])
 
   useEffect(() => {
