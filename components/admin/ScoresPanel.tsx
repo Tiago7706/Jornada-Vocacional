@@ -20,8 +20,10 @@ type DisplayMode =
   | 'course-stars'
   | 'pontos-stars'
   | 'cslb-ranking'
+  | 'jv-results'
 
 const DISPLAY_MODE: Record<number, DisplayMode> = {
+  0:  'jv-results',
   1:  'riasec',
   2:  'personality',
   3:  'area-bars',
@@ -206,6 +208,121 @@ function PontosStarsDisplay({ scores }: { scores: Record<string, unknown> }) {
   )
 }
 
+const JV_VALORES: Record<string, string> = {
+  Seg:'Segurança', Cri:'Criatividade', Alt:'Altruísmo', Est:'Estética',
+  Var:'Variedade', Est_I:'Est. Intelectual', Pre:'Prestígio', Equ:'Equilíbrio',
+  Des:'Desenvolvimento', Ges:'Gestão', Ind:'Independência', Ret:'Ret. Econômico',
+  Rel:'Relacionamentos', Pro:'Progressão', Amb:'Ambiente',
+}
+const JV_BANDURA: Record<string, string> = {
+  Adm:'Administração', Bio:'Ciências Biológicas', Sau:'Saúde',
+  Hum:'Ciências Humanas', Com:'Comunicação', Art:'Artes e Design',
+  Exa:'Ciências Exatas/TI', Eng:'Engenharia', Mil:'Carreiras Militares',
+}
+const MBTI_PAIRS = [['E','I'],['S','N'],['T','F'],['J','P']] as const
+
+function JVResultsDisplay({ scores }: { scores: Record<string, unknown> }) {
+  const holland     = scores.holland    as Record<string, number> | undefined
+  const hollandCode = scores.hollandCode as string | undefined
+  const mbti        = scores.mbti       as { type: string; scores: Record<string, number> } | undefined
+  const valores     = scores.valores    as Record<string, number> | undefined
+  const bandura     = scores.bandura    as Record<string, number> | undefined
+
+  const hollandEntries = holland
+    ? Object.entries(holland).sort(([, a], [, b]) => b - a)
+    : []
+  const maxH = hollandEntries[0]?.[1] ?? 100
+
+  const valoresEntries = valores
+    ? Object.entries(valores).sort(([, a], [, b]) => b - a)
+    : []
+  const maxV = valoresEntries[0]?.[1] ?? 100
+
+  const banduraEntries = bandura
+    ? Object.entries(bandura).sort(([, a], [, b]) => b - a)
+    : []
+  const maxB = banduraEntries[0]?.[1] ?? 100
+
+  return (
+    <div className="space-y-5">
+      {/* Holland */}
+      {hollandEntries.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+            Holland — <span className="text-foreground font-bold">{hollandCode ?? '—'}</span>
+          </p>
+          <div className="space-y-0.5">
+            {hollandEntries.map(([key, val]) => (
+              <Bar
+                key={key}
+                label={`${key} — ${RIASEC_META[key]?.label ?? key}`}
+                value={val}
+                max={maxH}
+                color={RIASEC_META[key]?.color ?? 'bg-indigo-500'}
+                suffix="%"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* MBTI */}
+      {mbti && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+            MBTI — <span className="text-foreground font-bold">{mbti.type}</span>
+          </p>
+          <div className="space-y-0.5">
+            {MBTI_PAIRS.map(([a, b]) => {
+              const va = mbti.scores[a] ?? 0
+              const vb = mbti.scores[b] ?? 0
+              const total = va + vb || 1
+              const pctA = Math.round((va / total) * 100)
+              return (
+                <div key={a} className="flex items-center gap-2 text-sm">
+                  <span className="w-5 text-right font-mono font-bold">{a}</span>
+                  <div className="flex-1 flex gap-0.5 h-3 rounded-full overflow-hidden bg-gray-100">
+                    <div className="bg-violet-500 h-full" style={{ width: `${pctA}%` }} />
+                    <div className="bg-gray-300 h-full flex-1" />
+                  </div>
+                  <span className="w-5 font-mono font-bold">{b}</span>
+                  <span className="text-xs text-muted-foreground w-20 text-right">
+                    {a}:{va} / {b}:{vb}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Valores */}
+      {valoresEntries.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Valores de Trabalho</p>
+          <div className="space-y-0.5">
+            {valoresEntries.map(([key, val]) => (
+              <Bar key={key} label={JV_VALORES[key] ?? key} value={val} max={maxV} color="bg-emerald-500" suffix="%" />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Bandura */}
+      {banduraEntries.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Autoeficácia (Bandura)</p>
+          <div className="space-y-0.5">
+            {banduraEntries.map(([key, val]) => (
+              <Bar key={key} label={JV_BANDURA[key] ?? key} value={val} max={maxB} color="bg-sky-500" suffix="%" />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CslbRankingDisplay({ scores }: { scores: Record<string, unknown> }) {
   type CourseRow = { name: string; area: string; stars: number }
   const allCourses = scores.allCourses as CourseRow[] | undefined
@@ -315,6 +432,7 @@ function ScoreCard({ entry }: { entry: ScoreEntry }) {
 
       {open && (
         <div className="px-4 pb-4 pt-2 border-t bg-muted/20">
+          {mode === 'jv-results'    && <JVResultsDisplay   scores={entry.scores} />}
           {mode === 'riasec'        && <RiasecDisplay      scores={entry.scores} />}
           {mode === 'personality'   && <PersonalityDisplay scores={entry.scores} />}
           {mode === 'area-bars'     && <AreaBarsDisplay    scores={entry.scores} />}
