@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { GameProps } from '@/types/database'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -296,17 +296,6 @@ function computeResults(scores: Scores) {
 
 // ─── Illustration backgrounds ─────────────────────────────────────────────────
 
-const ILL_STYLES: Record<string, CSSProperties & { emoji: string }> = {
-  city:     { background:'linear-gradient(180deg,#0a0a1a,#1a1a3a,#2a1a4a)', emoji:'🏙️' },
-  forest:   { background:'linear-gradient(180deg,#0a1a0a,#0d2b0d,#1a3a1a)', emoji:'🌲' },
-  lab:      { background:'linear-gradient(180deg,#0a0a1a,#0a1a2a,#0a2a2a)', emoji:'🔬' },
-  stage:    { background:'linear-gradient(180deg,#1a0a1a,#2a0a2a,#3a1a1a)', emoji:'🎭' },
-  market:   { background:'linear-gradient(180deg,#1a1000,#2a1a00,#3a2a00)', emoji:'🏪' },
-  ocean:    { background:'linear-gradient(180deg,#000a1a,#001a2a,#002a3a)', emoji:'🌊' },
-  mountain: { background:'linear-gradient(180deg,#0a0a14,#1a1a2a,#2a2a3a)', emoji:'⛰️' },
-  workshop: { background:'linear-gradient(180deg,#1a0a00,#2a1400,#3a2000)', emoji:'🔧' },
-  space:    { background:'linear-gradient(180deg,#000005,#05000a,#0a0014)', emoji:'🚀' },
-}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -396,7 +385,7 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
 
   const pct = Math.round(scene / TOTAL * 100)
   const sc = ALL_SCENES[scene]
-  const ill = sc ? (ILL_STYLES[sc.ill] ?? ILL_STYLES.city) : ILL_STYLES.city
+
   const answeredCount = Object.keys(choices).length
 
   // ── Cover ──────────────────────────────────────────────────────────────────
@@ -609,10 +598,6 @@ export default function JornadaVocacional({ patientId, experienceId, initialStat
       <div style={{ maxWidth:560, margin:'0 auto', padding:'16px 14px 60px' }} key={animKey}>
         {/* Scene card */}
         <div style={{ background:'#1e1e32', borderRadius:14, border:'1px solid rgba(255,255,255,.08)', overflow:'hidden', boxShadow:'0 8px 32px rgba(0,0,0,.4)', marginBottom:16 }}>
-          {/* Illustration */}
-          <div style={{ height:140, ...ill, display:'flex', alignItems:'center', justifyContent:'center', fontSize:72 }}>
-            {ill.emoji}
-          </div>
           {/* Meta */}
           <div style={{ padding:'8px 18px 0', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <span style={{ fontSize:11, fontWeight:700, color:'#7c3aed', textTransform:'uppercase', letterSpacing:'.07em' }}>Cena {scene+1} de {TOTAL}</span>
